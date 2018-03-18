@@ -93,18 +93,24 @@
         </v-avatar>
       </v-btn>
     </v-toolbar>
-    <v-content>
-      <v-container fluid fill-height>
-        <v-layout justify-center align-center>
-         
+     
+    <v-content >
+      
+      <v-container fluid class="px-0 py-0">
+        <v-layout class="px-0 py-0" >
+          <v-flex xs12>
         <v-fade-transition mode="out-in">
-          <router-view></router-view>
+          <v-parallax :src="`http://p0s30qphu.bkt.clouddn.com/18-1-8/${ mainparallax.url }.jpg`" height="1000">
+      
+          <router-view class="px-0 py-0"></router-view></v-parallax>
         </v-fade-transition>
-   
-          
+          </v-flex>
+
         </v-layout>
+      
       </v-container>
     </v-content>
+
     <v-btn
       fab
       bottom
@@ -138,7 +144,10 @@ export default {
         { icon: 'settings', text: '用户设置', url:'setting', url: 'setting' },
         { icon: 'data_usage', text: '使用情况', url:'usage', url: 'usage' }
         
-      ]
+      ],
+      mainparallax :{
+        url: '13633991'
+      } 
     }),
     props: {
       source: String
