@@ -29,10 +29,10 @@
                     <v-flex xs12 sm12>
                       <v-list two-line>
                         <template v-for="(item, index) in nodes">
-                          <v-list-tile avatar ripple @click="toggle(index)" :key="item.title">
+                          <v-list-tile avatar ripple @click="openDialog(item)" :key="item.title">
                             <v-list-tile-content>
                               <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                              <v-list-tile-sub-title>{{ item.subtitle }}</v-list-tile-sub-title>
+                              <v-list-tile-sub-title>{{ item.transfer }}</v-list-tile-sub-title>
                             </v-list-tile-content>
                             <v-list-tile-action>
                               <v-icon color="red" v-if="item.statu==='0'">error</v-icon>
@@ -47,6 +47,16 @@
                   </v-layout>
                 </v-container>
               </v-card>
+              <template id="modal">
+                <v-dialog v-model="dialog" max-width="500">
+                  <v-card>
+                    <v-card-media :src="`http://p0s30qphu.bkt.clouddn.com/17-12-11//${ node.pic }.jpg`" height="400px"></v-card-media>
+                    <v-card-title class="headline">{{ node.title }}</v-card-title>
+                    <v-card-text>{{ node.transfer }}</v-card-text>
+
+                  </v-card>
+                </v-dialog>
+              </template>
             </template>
           </v-flex>
         </v-layout>
@@ -58,15 +68,23 @@
 export default {
   data() {
     return {
+      dialog: false,
       loaded: false,
       nodes: [
-        { title: '节点名称', subtitle: "流量", statu: "0" },
-        { title: '节点名称', subtitle: "流量", statu: "1" },
-        { title: '节点名称', subtitle: "流量", statu: "2" },
-        { title: '节点名称', subtitle: "流量", statu: "0" },
-        { title: '节点名称', subtitle: "流量", statu: "1" },
-        { title: '节点名称', subtitle: "流量", statu: "2" }
+        { id: '', title: '节点名称', transfer: "流量", statu: "0", pic: "63455021" },
+        { id: '', title: '节点名称', transfer: "流量", statu: "1", pic: "63455021" },
+        { id: '', title: '节点名称', transfer: "流量", statu: "2", pic: "63455021" },
+        { id: '', title: '节点名称', transfer: "流量", statu: "0", pic: "63455021" },
+        { id: '', title: '节点名称', transfer: "流量", statu: "1", pic: "63455021" },
+        { id: '', title: '节点名称', transfer: "流量", statu: "2", pic: "63455021" }
       ],
+      node: {
+        id: null,
+        title: null,
+        transfer: null,
+        statu: null,
+        pic: null        
+      },
       empty: false,
       error: null,
       mainparallax: {
@@ -101,9 +119,14 @@ export default {
           this.error = response.statusText
         }
       })
+    },
+    openDialog(item) {
+      this.node = item
+      this.dialog = true
     }
   },
   name: 'List'
 }
+
 
 </script>
