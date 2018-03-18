@@ -87,7 +87,7 @@
       <v-btn icon large>
         <v-avatar size="32px" tile>
           <img
-            src="https://vuetifyjs.com/static/doc-images/logo.svg"
+            src="http://p0s30qphu.bkt.clouddn.com/17-12-11/30745235.jpg"
             alt="Vuetify"
           >
         </v-avatar>
@@ -100,9 +100,9 @@
         <v-layout class="px-0 py-0" >
           <v-flex xs12>
         <v-fade-transition mode="out-in">
-          <v-parallax :src="`http://p0s30qphu.bkt.clouddn.com/18-1-8/${ mainparallax.url }.jpg`" height="1000">
+
       
-          <router-view class="px-0 py-0"></router-view></v-parallax>
+          <router-view class="px-0 py-0"></router-view>
         </v-fade-transition>
           </v-flex>
 
@@ -144,10 +144,8 @@ export default {
         { icon: 'settings', text: '用户设置', url:'setting', url: 'setting' },
         { icon: 'data_usage', text: '使用情况', url:'usage', url: 'usage' }
         
-      ],
-      mainparallax :{
-        url: '13633991'
-      } 
+      ]
+      
     }),
     props: {
       source: String

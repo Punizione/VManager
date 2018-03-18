@@ -1,6 +1,6 @@
 <template>
-
-    <v-content>
+  <v-parallax :src="`http://p0s30qphu.bkt.clouddn.com/18-1-8/${ mainparallax.url }.jpg`" height="1000">
+    <v-content class="px-0 py-0">
       <v-container fluid>
         <v-layout column>
           <v-flex xs12 sm12>
@@ -23,24 +23,20 @@
                 </template>
               </v-tabs>
             </v-toolbar>
-            <template class="loading" v-if="loaded===true">
-              <v-tabs-items v-model="tab">
+            <template class="loading" v-if="loaded===false">
               <v-content class="px-0">
                 <v-container>
-                  <v-layout row justify-center align-center>  
-                    <v-card fluid full-height>
-                      <img src="http://p0s30qphu.bkt.clouddn.com/18-3-18/49349159.jpg" />
-                    </v-card>
+                  <v-layout row justify-center align-center>
+                    <img src="http://p0s30qphu.bkt.clouddn.com/18-3-18/77660072.jpg" />
                   </v-layout>
                 </v-container>
               </v-content>
-            </v-tabs-items>
             </template>
             <template v-else-if="error" class="error"></template>
             <template v-else-if="empty" class="empty"></template>
             <template v-else>
               <v-tabs-items v-model="tab">
-                <v-tab-item v-for="item in steps" :key="item">
+                <v-tab-item v-for="item in steps" :key="item.text">
                   <v-card>
                     <v-stepper v-model="steptor" vertical non-linear>
                       <v-stepper-step step="1" :complete="steptor > 1" editable edit-icon="done">
@@ -79,7 +75,7 @@
         </v-layout>
       </v-container>
     </v-content>
-
+  </v-parallax>
 </template>
 <script>
 export default {
@@ -95,7 +91,10 @@ export default {
         { text: 'SwitchyOmega', icon: '6' }
       ],
       empty: false,
-      error: null
+      error: null,
+      mainparallax: {
+        url: null
+      }
     }
   },
   created() {
@@ -118,7 +117,9 @@ export default {
             } else {
               this.steps = response.data.steps
               this.steptor = 1
+
             }
+            this.mainparallax = response.data.mainparallax
           }
           this.loaded = true
         } else {
