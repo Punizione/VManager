@@ -93,9 +93,7 @@ export default {
     ]
 
   }),
-  props: {
-    source: String
-  },
+  
   name: 'App'
 }
 

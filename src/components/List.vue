@@ -53,7 +53,6 @@
                     <v-card-media :src="`http://p0s30qphu.bkt.clouddn.com/17-12-11//${ node.pic }.jpg`" height="400px"></v-card-media>
                     <v-card-title class="headline">{{ node.title }}</v-card-title>
                     <v-card-text>{{ node.transfer }}</v-card-text>
-
                   </v-card>
                 </v-dialog>
               </template>
@@ -83,7 +82,7 @@ export default {
         title: null,
         transfer: null,
         statu: null,
-        pic: null        
+        pic: null
       },
       empty: false,
       error: null,
@@ -127,6 +126,5 @@ export default {
   },
   name: 'List'
 }
-
 
 </script>
