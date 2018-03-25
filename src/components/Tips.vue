@@ -39,33 +39,28 @@
                 <v-tab-item v-for="item in steps" :key="item.text">
                   <v-card>
                     <v-stepper v-model="steptor" vertical non-linear>
-                      <v-stepper-step step="1" :complete="steptor > 1" editable edit-icon="done">
-                        Select an app
-                        <small>Summarize if needed</small>
-                      </v-stepper-step>
-                      <v-stepper-content step="1">
-                        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-                        <v-btn color="primary" @click.native="steptor = 2">Continue</v-btn>
-                        <v-btn flat>Cancel</v-btn>
-                      </v-stepper-content>
-                      <v-stepper-step step="2" :complete="steptor > 2" editable edit-icon="done">Configure analytics for this app</v-stepper-step>
-                      <v-stepper-content step="2">
-                        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-                        <v-btn color="primary" @click.native="steptor = 3">Continue</v-btn>
-                        <v-btn flat>Cancel</v-btn>
-                      </v-stepper-content>
-                      <v-stepper-step step="3" :complete="steptor > 3" editable edit-icon="done">Select an ad format and name ad unit</v-stepper-step>
-                      <v-stepper-content step="3">
-                        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-                        <v-btn color="primary" @click.native="steptor = 4">Continue</v-btn>
-                        <v-btn flat>Cancel</v-btn>
-                      </v-stepper-content>
-                      <v-stepper-step step="4" editable edit-icon="done">View setup instructions</v-stepper-step>
-                      <v-stepper-content step="4">
-                        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-                        <v-btn color="primary" @click.native="steptor = 1">Continue</v-btn>
-                        <v-btn flat>Cancel</v-btn>
-                      </v-stepper-content>
+                      <template v-for="st in item.step">
+                        <v-stepper-step :step='st.num' :complete='steptor > st.num' editable edit-icon="done">
+                          {{ st.title }}
+                          <small>{{ st.subtitle }}</small>
+                        </v-stepper-step>
+                        <v-stepper-content :step='st.num'>
+                          <v-card  flat>
+                            <v-card-media :src="st.pic">
+                            </v-card-media>
+                            <v-card-title primary-title>
+                              <div>{{ st.text }}</div>
+                            </v-card-title>
+                          </v-card>
+                          <v-btn flat>上一步</v-btn>
+                          <template v-if="st.num<item.step.length">
+                            <v-btn color="primary" @click.native="steptor = st.num+1">下一步</v-btn>
+                          </template>
+                          <template v-else>
+                            <v-btn color="primary" @click.native="steptor = 1">第一步</v-btn>
+                          </template>
+                        </v-stepper-content>
+                      </template>
                     </v-stepper>
                   </v-card>
                 </v-tab-item>
@@ -84,11 +79,34 @@ export default {
       steptor: 1,
       tab: null,
       loaded: false,
-      steps: [
-        { text: 'ssr', icon: 'airplanemode_active' },
-        { text: 'v2ray', icon: 'airplanemode_active' },
-        { text: 'IPV6', icon: '6' },
-        { text: 'SwitchyOmega', icon: '6' }
+      steps: [{
+          text: 'ssr',
+          icon: 'airplanemode_active',
+          step: [
+            { 'num': 1, 'title': '首先', 'subtitle': '然后', 'text': '内容', 'pic': 'http://p0s30qphu.bkt.clouddn.com/18-1-5/3580234.jpg' }
+          ]
+        },
+        {
+          text: 'v2ray',
+          icon: 'airplanemode_active',
+          step: [
+            { 'num': 1, 'title': '首先', 'subtitle': '然后', 'text': '内容', 'pic': 'http://p0s30qphu.bkt.clouddn.com/18-1-5/3580234.jpg' }
+          ]
+        },
+        {
+          text: 'IPV6',
+          icon: '6',
+          step: [
+            { 'num': 1, 'title': '首先', 'subtitle': '然后', 'text': '内容', 'pic': 'http://p0s30qphu.bkt.clouddn.com/18-1-5/3580234.jpg' }
+          ]
+        },
+        {
+          text: 'SwitchyOmega',
+          icon: '6',
+          step: [
+            { 'num': 1, 'title': '首先', 'subtitle': '然后', 'text': '内容', 'pic': 'http://p0s30qphu.bkt.clouddn.com/18-1-5/3580234.jpg' }
+          ]
+        }
       ],
       empty: false,
       error: null,
