@@ -82,30 +82,22 @@ export default {
       steps: [{
           text: 'ssr',
           icon: 'airplanemode_active',
-          step: [
-            { 'num': 1, 'title': '首先', 'subtitle': '然后', 'text': '内容', 'pic': 'http://p0s30qphu.bkt.clouddn.com/18-1-5/3580234.jpg' }
-          ]
+          step: null
         },
         {
           text: 'v2ray',
           icon: 'airplanemode_active',
-          step: [
-            { 'num': 1, 'title': '首先', 'subtitle': '然后', 'text': '内容', 'pic': 'http://p0s30qphu.bkt.clouddn.com/18-1-5/3580234.jpg' }
-          ]
+          step:  null
         },
         {
           text: 'IPV6',
           icon: '6',
-          step: [
-            { 'num': 1, 'title': '首先', 'subtitle': '然后', 'text': '内容', 'pic': 'http://p0s30qphu.bkt.clouddn.com/18-1-5/3580234.jpg' }
-          ]
+          step:  null
         },
         {
           text: 'SwitchyOmega',
           icon: '6',
-          step: [
-            { 'num': 1, 'title': '首先', 'subtitle': '然后', 'text': '内容', 'pic': 'http://p0s30qphu.bkt.clouddn.com/18-1-5/3580234.jpg' }
-          ]
+          step:  null
         }
       ],
       empty: false,
