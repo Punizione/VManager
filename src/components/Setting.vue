@@ -1,70 +1,107 @@
- <template>
- <v-app id="inspire">
-    <v-layout column>
-      <v-flex xs12 sm6>
-        <v-toolbar color="indigo" dark>
-          
-          <v-toolbar-title>Step</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn icon>
-            <v-icon>sort</v-icon>
-          </v-btn>
-          <v-tabs
-        color="indigo"
-        slot="extension"
-        v-model="tab"
-                  drak
-        grow
-                  icons-and-text
-      ><v-tabs-slider color="yellow"></v-tabs-slider>
-            <v-tab v-for="item in items" :key="item">
-          {{ item.text }}
-              <v-icon>{{ item.icon }}</v-icon>
-        </v-tab>
-          </v-tabs>
-        </v-toolbar>
-        <v-tabs-items v-model="tab">
-      <v-tab-item v-for="item in items" :key="item">
-        <v-card>
-    <v-stepper v-model="steptor" vertical non-linear>
-      <v-stepper-step step="1" :complete="steptor > 1" editable edit-icon="done"
-                      >
-        Select an app
-        <small>Summarize if needed</small>
-      </v-stepper-step>
-      <v-stepper-content step="1">
-        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-        <v-btn color="primary" @click.native="steptor = 2">Continue</v-btn>
-        <v-btn flat>Cancel</v-btn>
-      </v-stepper-content>
-      <v-stepper-step step="2" :complete="steptor > 2" editable edit-icon="done">Configure analytics for this app</v-stepper-step>
-      <v-stepper-content step="2">
-        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-        <v-btn color="primary" @click.native="steptor = 3">Continue</v-btn>
-        <v-btn flat>Cancel</v-btn>
-      </v-stepper-content>
-      <v-stepper-step step="3" :complete="steptor > 3" editable edit-icon="done">Select an ad format and name ad unit</v-stepper-step>
-      <v-stepper-content step="3">
-        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-        <v-btn color="primary" @click.native="steptor = 4">Continue</v-btn>
-        <v-btn flat>Cancel</v-btn>
-      </v-stepper-content>
-      <v-stepper-step step="4" editable edit-icon="done">View setup instructions</v-stepper-step>
-      <v-stepper-content step="4">
-        <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-        <v-btn color="primary" @click.native="steptor = 1">Continue</v-btn>
-        <v-btn flat>Cancel</v-btn>
-      </v-stepper-content>
-    </v-stepper>
-          </v-card>
-        </v-tab-item>
-    </v-tabs-items>
-        </v-flex>
-    </v-layout>
-  </v-app>
-  </template>
+<template>
+  <v-parallax src="http://p0s30qphu.bkt.clouddn.com/18-1-8/13633991.jpg" height="1000">
+    <v-content class="px-0 py-0">
+      <v-container fluid>
+        <v-layout column>
+          <v-flex xs12 sm6>
+            <v-toolbar color="indigo" dark>
+              <v-toolbar-title>用户设置</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-btn icon>
+                <v-icon>sort</v-icon>
+              </v-btn>
+            </v-toolbar>
+            <v-container fluid>
+              <v-layout row>
+                <v-flex xs12 sm6>
+                  <v-card>
+                    <v-container fluid>
+                      <v-card-title><h3 class="headline">修改密码</h3></v-card-title>
+                      <v-form v-model="changePswForm" ref="changePswForm" lazy-validation>
+                        <v-flex xs12>
+                          <v-text-field 
+                            v-model="oldPassword" 
+                            label="原密码" 
+                            :rules="noEmpty" 
+                            required 
+                            :append-icon="e1 ? 'visibility_off' : 'visibility'" 
+                            :append-icon-cb="() => (e1 = !e1)" 
+                            :type="e1?'password':'text'"
+                          ></v-text-field>
+                        </v-flex>
+                        <v-flex xs12>
+                          <v-text-field 
+                            v-model="newPassword" 
+                            label="新密码" 
+                            :rules="noEmpty" 
+                            required
+                            :append-icon="e2 ? 'visibility_off' : 'visibility'" 
+                            :append-icon-cb="() => (e2 = !e2)" 
+                            :type="e2?'password':'text'"
+                          ></v-text-field>
+                        </v-flex>
+                        <v-flex xs12>
+                          <v-text-field 
+                            v-model="newPasswordRe" 
+                            label="新密码again" 
+                            :rules="noEmpty" 
+                            required
+                            :append-icon="e3 ? 'visibility_off' : 'visibility'" 
+                            :append-icon-cb="() => (e3 = !e3)" 
+                            :type="e3?'password':'text'"
+                          ></v-text-field>
+                        </v-flex>
+                      </v-form>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn flat color="orange" @click.native="changePassword()">修改</v-btn>
+                      </v-card-actions>
+                    </v-container>
+                  </v-card>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-content>
+    <v-snackbar :color="snackbarColor" v-model="snackbar" right bottom>{{ alertText }}</v-snackbar>
+  </v-parallax>
+
+</template>
 <script>
 export default {
-  
+  data: () => ({
+    snackbarColor: 'primary',
+    snackbar: null,
+    alertText: '',
+    e1: true,
+    e2: true,
+    e3: true,
+    changePswForm: null,
+    oldPassword: null,
+    newPassword: null,
+    newPasswordRe: null,
+
+    noEmpty: [
+      v => !!v || "不能为空"
+    ]
+  }),
+  methods: {
+    changePassword() {
+      if(this.$refs.changePswForm.validate()){
+        if(this.newPassword == this.newPasswordRe){
+          this.snackbarColor = 'success'
+          this.alertText = '修改成功'
+        } else {
+          this.snackbarColor = 'error'
+          this.alertText = '两次输入密码不一致'
+        }
+        this.snackbar = true
+      }
+    }
+
+  }
+
 }
 </script>

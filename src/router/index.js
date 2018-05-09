@@ -4,7 +4,8 @@ import List from '@/components/List'
 import Setting from '@/components/Setting'
 import SpeedTest from '@/components/SpeedTest'
 import Tips from '@/components/Tips'
-import Usage from '@/components/Usage'
+import Rss from '@/components/Rss'
+import Download from '@/components/Download'
 
 Vue.use(Router)
 
@@ -14,7 +15,8 @@ export default new Router({
 	  { path: '/speedtest', component: SpeedTest }, 
 	  { path: '/tips', component: Tips },
 	  { path: '/setting', component: Setting },
-	  { path: '/usage', component: Usage },
+	  { path: '/rss', component: Rss },
+	  { path: '/download', component: Download },
 	  { path: '*', redirect: '/list' }
   ]
 })
