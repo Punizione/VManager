@@ -1,8 +1,0 @@
-SQLAlchemy
-Flask
-Flask-RESTful
-PyJWT
-itsdangerous
-Flask-SQLAlchemy
-pymysql
-passlib
