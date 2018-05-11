@@ -1,0 +1,110 @@
+<template>
+  <v-parallax src="http://p0s30qphu.bkt.clouddn.com/18-1-8/13633991.jpg" height="1000">
+    <v-content class="px-0 py-0">
+      <v-container fluid>
+        <v-layout column>
+          <v-flex xs12 sm6>
+            <v-toolbar color="indigo" dark>
+              <v-toolbar-title>资源下载</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-btn icon>
+                <v-icon>sort</v-icon>
+              </v-btn>
+            </v-toolbar>
+            <v-container fluid grid-list-lg>
+              <v-layout row wrap>
+                <template v-for="item in resources">
+                  <v-flex xs12 sm6 lg4>
+                    <v-card  :key="item.title">
+                      <v-container fluid>
+                        <v-layout row wrap>
+                          <v-flex xs5>
+                            <v-card-media src="@/assets/1.png" height="125px" contain></v-card-media>
+                          </v-flex>
+                          <v-flex xs7>
+                            <div>
+                              <div class="headline">{{ item.title }}</div>
+                              <div>{{ item.text }}</div>
+                            </div>
+                          </v-flex>
+                        </v-layout>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <template v-for="(res, index) in item.res">
+                            <v-btn color="primary" flat slot="activator" @click="showVerify(res.src)">下载链接{{ index+1 }}</v-btn>
+                          </template>
+                        </v-card-actions>
+                      </v-container>
+                    </v-card>
+                  </v-flex>
+                </template>
+              </v-layout>
+            </v-container>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-content>
+    <v-dialog v-model="verifyDialog" max-width="290">
+      <v-card>
+        <v-card-title class="headline">下载验证</v-card-title>
+        <v-container>
+          <v-layout row wrap>
+            <v-flex xs12>
+              <v-card-media :src="verifyCode" @click.native="loadVerifyCode()"></v-card-media>
+            </v-flex>
+            <v-flex xs12>
+              <v-text-field label="请输入上图标准分子式" :loading="progress">
+                  <v-progress-linear  :indeterminate="true" height="2" slot="progress"></v-progress-linear>
+              </v-text-field>
+            </v-flex>
+          </v-layout>
+        </v-container>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" flat @click.native="loadVerifyCode()">更换验证图片</v-btn>
+          <v-btn color="primary" flat @click.native="verify()">验证</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-snackbar :color="snackbarColor" v-model="snackbar" right bottom>{{ alertText }}</v-snackbar>
+  </v-parallax>
+</template>
+<script>
+export default {
+  data : () => ({
+    snackbarColor: "success",
+    snackbar: null,
+    alertText: '',
+    verifyDialog: false,
+    verifyCode: '',
+    progress: false,
+
+    resources : [
+      { title: "SSR-Anndroid", text: "4.7.1", icon: "", res:[ {src: "https://xx.yy"},{src: "https://xx.yy"},{src: "https://xx.yy"}] },
+      { title: "SSR-Anndroid", text: "4.7.1", icon: "", res:[ {src: "https://xx.yy"},{src: "https://xx.yy"},{src: "https://xx.yy"}] },
+      { title: "SSR-Anndroid", text: "4.7.1", icon: "", res:[ {src: "https://xx.yy"},{src: "https://xx.yy"},{src: "https://xx.yy"}] }
+    ]
+  }),
+  watch: {
+    verifyDialog: 'stopLoading'
+  },
+  methods:{
+    showVerify(url) {
+      this.verifyDialog = true
+    },
+    loadVerifyCode() {
+      this.alertText = 'Test'
+      this.snackbar = true
+    },
+    verify() {
+      this.progress = true
+    },
+    stopLoading() {
+      if( this.progress ){
+        this.progress = ! this.progress
+      }
+    }
+
+  }
+}
+</script>
