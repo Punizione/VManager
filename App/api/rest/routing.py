@@ -5,15 +5,17 @@ http://flask-restful.readthedocs.io/en/latest/
 """
 
 import time
-from flask import request
-from App.api.rest.base import BaseResource, SecureResource, HalfProtectResource, rest_resource
+from flask import request,g
+from App.api.rest.base import BaseResource, SecureResource, HalfProtectResource, CheckAuthorizationResource, rest_resource
 from App.api.models.User import User
 from flask_restful import abort
 import datetime
+import time
 import re
 from App import db
 from App import app
 import jwt
+
 @rest_resource
 class ResourceOne(BaseResource):
     """ /api/resource/one """
@@ -43,7 +45,7 @@ class NodeResource(HalfProtectResource):
     endpoints = ['/nodes']
 
     def get(self):
-        if g.user.username == 'visitor':
+        if g.user.username == b'visitor':
             return { "empty": True, "mainparallax": "13633991"}
         else:
             return { 
@@ -60,18 +62,32 @@ class NodeResource(HalfProtectResource):
         
         return { "empty": True, "mainparallax": "13633991"}
 
-    def post(self):
-        return { 
-            "empty": False, 
-            "nodes": [
-                {"id": 1, "title": "XXX", "transfer": "XXX/XXX", "statu": "0", "pic": "63455021"},
-                {"id": 2, "title": "XXX", "transfer": "XXX/XXX", "statu": "0", "pic": "63455021"},
-                {"id": 3, "title": "XXX", "transfer": "XXX/XXX", "statu": "0", "pic": "63455021"},
-                {"id": 4, "title": "XXX", "transfer": "XXX/XXX", "statu": "0", "pic": "63455021"},
-                {"id": 5, "title": "XXX", "transfer": "XXX/XXX", "statu": "0", "pic": "63455021"}
-            ],
-            "mainparallax": "13633991"
-        }
+
+@rest_resource
+class MenuReosurce(CheckAuthorizationResource):
+    """ /api/menu """
+    endpoints = ['/menu']
+    
+    def get(self):
+        noLogin = {'data':[{'title': 'LOGIN','items': [{'icon': 'fingerprint', 'text': '登录', 'url': '/auth'}]}]}
+
+        loged = {'data': [{'title': 'NODES',  'items': [
+                    {'icon': 'list', 'text': '节点列表', 'url': '/list'},
+                    {'icon': 'trending_up', 'text': '节点测速', 'url': '/speedtest'},
+                    {'icon': 'help', 'text': '使用教程', 'url': '/tips'}
+                    ]},{'title': 'USER','items': [
+                    {'icon': 'rss_feed', 'text': '用户订阅', 'url': '/rss'},
+                    {'icon': 'settings', 'text': '用户设置', 'url': '/setting'},
+                    {'icon': 'cloud_download', 'text': '资源下载', 'url': '/download'}
+                ]}
+            ]}
+        if g.user and g.user.username == b'LOGED':
+            return loged
+        else:
+            return noLogin
+                
+            
+
 
 @rest_resource
 class UserResource(SecureResource):
@@ -91,7 +107,7 @@ class Login(BaseResource):
         password = json_payload['password']
         user = User.authenticate(username, password)
         if user:
-            exp = exp = datetime.datetime.utcnow() + datetime.timedelta(hours=app.config['SECURITY_TOKEN_USER_HOUR'])
+            exp = datetime.datetime.utcnow() + datetime.timedelta(hours=app.config['SECURITY_TOKEN_USER_HOUR'])
             encode = jwt.encode({
                 'username': username,
                 'exp': exp
@@ -105,11 +121,12 @@ class VisitorLogin(BaseResource):
     """ /api/auth/temp """
     endpoints = ['/auth/temp']
     def post(self):
-        exp = exp = datetime.datetime.utcnow() + datetime.timedelta(hours=app.config['SECURITY_TOKEN_VISITOR_HOUR'])
+        exp = datetime.datetime.utcnow() + datetime.timedelta(hours=app.config['SECURITY_TOKEN_VISITOR_HOUR'])
         encode = jwt.encode({
             'username': 'visitor',
             'exp': exp
         }, app.config['SECRET_KEY'], algorithm='HS256')
+        print(encode)
         return {'retCode': 1, "token": encode.decode('utf-8') }
 
 

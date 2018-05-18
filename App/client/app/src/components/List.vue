@@ -1,5 +1,5 @@
 <template>
-  <v-parallax :src="`http://p0s30qphu.bkt.clouddn.com/18-1-8/${ mainparallax.url }.jpg`" height="1000">
+  <v-parallax :src="`http://p0s30qphu.bkt.clouddn.com/18-1-8/${ mainparallax }.jpg`" height="1000">
     <v-content class="px-0 py-0">
       <v-container fluid>
         <v-layout column>
@@ -86,9 +86,8 @@ export default {
       },
       empty: false,
       error: null,
-      mainparallax: {
-        url: null
-      }
+      mainparallax: null
+      
     }
   },
   created() {
@@ -101,7 +100,7 @@ export default {
     fetchData() {
       this.error = this.nodes = null
       this.loaded = false
-      this.axios.get('http://localhost:8843/').then((response) => {
+      this.axios.get('/api/nodes').then((response) => {
         if (response.status == 200) {
           if (response.data.error) {
             this.error = response.error.toString()

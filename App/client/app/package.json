@@ -13,10 +13,13 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "hls.js": "^0.9.1",
     "vue": "^2.5.2",
+    "vue-aplayer": "^1.5.1",
     "vue-axios": "^2.0.2",
     "vue-router": "^3.0.1",
-    "vuetify": "^1.0.0"
+    "vuetify": "^1.0.0",
+    "vuex": "^2.1.2"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

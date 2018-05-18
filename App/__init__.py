@@ -14,7 +14,7 @@ app.config['SECURITY_TOKEN_VISITOR_HOUR'] = 1
 app.config['SECURITY_UNAUTHORIZED_VIEW'] = '/'
 
 # Database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:123456@127.0.0.1:3306/vma'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:000000@127.0.0.1:3306/vma'
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN']=True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

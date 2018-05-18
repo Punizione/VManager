@@ -11,18 +11,18 @@ class User(db.Model):
 	password = db.Column(db.String(128), nullable=False)
 	active = db.Column(db.Boolean(), default=True, nullable=False)
 
-	def __init__(self, username, password):
+	def __init__(self, username, password, active=True):
 		self.uuid = base64.urlsafe_b64encode(UUID.uuid4().bytes)[:-2].decode('utf-8')
 		self.username = username.encode('utf-8')
 		self.password = django_pbkdf2_sha256.encrypt(password).encode('utf-8')
-		self.active = True
+		self.active = active
 
 
 
 
 	@staticmethod
 	def authenticate(username, password):
-		user = User.query.filter(User.username == username).one()
+		user = User.query.filter(User.username == username).first()
 		if user and django_pbkdf2_sha256.verify(password, user.password):
 			return user
 		else:

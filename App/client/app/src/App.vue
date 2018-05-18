@@ -10,32 +10,21 @@
           </v-layout>
         </v-card-title>
       </v-card>
-      <v-list dense>
-        <v-subheader class="mt-3 grey--text text--darken-1">NODES</v-subheader>
-        <v-list-tile v-for="item in nodes" :key="item.text" :to="{ path: item.url }">
-          <v-list-tile-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>
-              <span>{{ item.text }}</span>
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-      <v-list dense>
-        <v-subheader class="mt-3 grey--text text--darken-1">USER</v-subheader>
-        <v-list-tile v-for="item in users" :key="item.text" :to="{ path: item.url }">
-          <v-list-tile-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>
-              {{ item.text }}
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
+      <template v-for="menu in menus">
+        <v-list dense :key="menu.title">
+          <v-subheader class="mt-3 grey--text text--darken-1">{{ menu.title }}</v-subheader>
+          <v-list-tile v-for="item in menu.items" :key="item.text" :to="{ path: item.url }">
+            <v-list-tile-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <span>{{ item.text }}</span>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+      </template>
     </v-navigation-drawer>
     <v-toolbar color="blue darken-3" dark app :clipped-left="$vuetify.breakpoint.mdAndUp" fixed>
       <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
@@ -47,14 +36,28 @@
       <v-btn icon>
         <v-icon>apps</v-icon>
       </v-btn>
-      <v-btn icon>
-        <v-icon>notifications</v-icon>
-      </v-btn>
-      <v-btn icon large>
-        <v-avatar size="32px" tile>
-          <img src="http://p0s30qphu.bkt.clouddn.com/18-3-18/26003829.jpg" alt="Vmanager">
-        </v-avatar>
-      </v-btn>
+      <v-bottom-sheet inset>
+        <v-btn icon slot="activator">
+          <v-icon>music_note</v-icon>
+        </v-btn>
+        
+          <aplayer autoplay :music="defaultMusic" :list="musicList" />
+        
+      </v-bottom-sheet>
+      <template v-if="loged">
+      <v-menu transition="slide-x-transition" bottom left offset-y min-width="160px" >
+        <v-btn icon large slot="activator">
+          <v-avatar size="32px" tile>
+            <img src="http://p0s30qphu.bkt.clouddn.com/18-3-18/26003829.jpg" alt="Vmanager">
+          </v-avatar>
+        </v-btn>
+        <v-list>
+          <v-list-tile @click="logout()">
+            <v-list-tile-title>登出</v-list-tile-title>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
+      </template>
     </v-toolbar>
     <v-content>
       <v-container fluid class="px-0 py-0">
@@ -67,7 +70,7 @@
         </v-layout>
       </v-container>
     </v-content>
-      <v-btn fab bottom right hover color="pink" dark fixed @click.stop="dialog = true">
+      <v-btn fab bottom right hover color="pink" dark fixed @click.stop="dialog = true" v-if="loged">
         <v-icon>add</v-icon>
       </v-btn>
     <v-dialog v-model="dialog" max-width="500px">
@@ -237,15 +240,24 @@
   </v-app>
 </template>
 <script>
+import * as types from './store/types'
+import Aplayer from 'vue-aplayer'
 export default {
   data: () => ({
+    loged: false,
     dialog: false,
     drawer: null,
     snackbar: false,
     alertText: '',
     snackbarColor: 'success',
     typeSelect: 'SSR',
-
+    defaultMusic: {
+      title: 'secret base~君がくれたもの~',
+      artist: 'Silent Siren',
+      src: 'https://moeplayer.b0.upaiyun.com/aplayer/secretbase.mp3',
+      pic: 'https://moeplayer.b0.upaiyun.com/aplayer/secretbase.jpg'
+    },
+    musicList : [],
     noEmpty: [
       v => !!v || "不能为空"
     ],
@@ -277,16 +289,7 @@ export default {
       head: '24935690',
       name: 'Delitto'
     },
-    nodes: [
-      { icon: 'list', text: '节点列表', url: '/list' },
-      { icon: 'trending_up', text: '节点测速', url: '/speedtest' },
-      { icon: 'help', text: '使用教程', url: '/tips' }
-    ],
-    users: [
-      { icon: 'rss_feed', text: '用户订阅', url: '/rss'},
-      { icon: 'settings', text: '用户设置', url: '/setting' },
-      { icon: 'cloud_download', text: '资源下载', url: '/download' }
-    ],
+    menus : null,
     typeItems: [
       { text: 'SSR', value: 'SSR', icon: 'send' },
       { text: 'V2Ray', value: 'V2ray', icon: 'send' },
@@ -296,6 +299,7 @@ export default {
     ssr: null,
     nodeName: null,
     ssrAddr: null,
+    ssrPort: null,
     ssrPsw: null,
     ssrMethod: 'none',
     ssrProtocol: 'origin',
@@ -390,6 +394,20 @@ export default {
 
   }),
   methods: {
+    getMenu() {
+      this.axios.get('/api/menu').then((response) => {
+        if(response.status == 200) {
+          if (response.data.data) {
+            this.menus = response.data.data
+          }else {
+            console.log("Menu Error")
+          }
+        }else{
+          console.log("Menu Error")
+        }
+      })
+      this.changeStatu()
+    },
     addNode() {
       if(this.$refs.ssr){
         if(this.$refs.ssr.validate()){
@@ -404,20 +422,26 @@ export default {
           this.dialog = false
         }
       }
-
-      /*
-      this.axios.post('http://localhost:8843/').then((response) => {
-        if (response.status == 200) {
-          if (response.data.error) {
-            this.error = response.data.error.toString()
-          }else {
-
-          }
-        } else {
-          this.error = response.statusText
-        }
-      })*/
+    },
+    logout() {
+      this.$store.commit(types.LOGOUT)
+      this.$router.push({
+        path: '/auth'
+      })
+    },
+    changeStatu() {
+      this.loged = this.$store.state.loged
     }
+  },
+  created() {
+    this.getMenu()
+    this.loged = this.$store.state.loged
+  },
+  watch: {
+    '$route': 'getMenu'
+  },
+  components: {
+    'aplayer': Aplayer
   },
   name: 'App'
 }

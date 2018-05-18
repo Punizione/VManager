@@ -15,7 +15,8 @@ api_rest = Api(api_bp)
 def add_header(response):
     # Required for vue app served from localhost to access 127.0.0.1:5000
     response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,POST'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,authorization'
     return response
 
 from App.api import views
