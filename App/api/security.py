@@ -77,7 +77,6 @@ def require_auth_loged(func):
                 g.user = User('NOLOG', '', False)
                 return func(*args, **kwargs)
             except jwt.ExpiredSignatureError:
-                print(1)
                 g.user = User('NOLOG', '', False)
                 return func(*args, **kwargs)
             if not decoded['username']:

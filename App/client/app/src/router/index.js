@@ -71,6 +71,10 @@ const router = new Router({
 	  	path: '/auth',
 	  	component: Auth,
 	  	name: '/auth'
+	  },
+	  {
+	  	path: '*',
+	  	redirect: '/auth'
 	  }
   ]
 });

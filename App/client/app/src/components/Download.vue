@@ -50,12 +50,14 @@
         <v-container>
           <v-layout row wrap>
             <v-flex xs12>
-              <v-card-media :src="verifyCode" @click.native="loadVerifyCode()"></v-card-media>
+              <v-card-media :src="verifyCode" @click.native="loadVerifyCode()" height="200px"></v-card-media>
             </v-flex>
             <v-flex xs12>
-              <v-text-field label="请输入上图标准分子式" :loading="progress">
+            <v-form ref="verifyCode">
+              <v-text-field  label="请输入上图标准分子式" :loading="progress" v-model="code" :rules="noEmptyRules">
                   <v-progress-linear  :indeterminate="true" height="2" slot="progress"></v-progress-linear>
               </v-text-field>
+              </v-form>
             </v-flex>
           </v-layout>
         </v-container>
@@ -77,8 +79,13 @@ export default {
     alertText: '',
     verifyDialog: false,
     verifyCode: '',
+    h: '',
+    code: null,
     progress: false,
-
+    downloadLink: null,
+    noEmptyRules: [
+        v => !!v || "不能为空"
+      ],
     resources : [
       { title: "SSR-Anndroid", text: "4.7.1", icon: "", res:[ {src: "https://xx.yy"},{src: "https://xx.yy"},{src: "https://xx.yy"}] },
       { title: "SSR-Anndroid", text: "4.7.1", icon: "", res:[ {src: "https://xx.yy"},{src: "https://xx.yy"},{src: "https://xx.yy"}] },
@@ -91,13 +98,62 @@ export default {
   methods:{
     showVerify(url) {
       this.verifyDialog = true
+      this.downloadLink = url
+      this.loadVerifyCode()
     },
     loadVerifyCode() {
-      this.alertText = 'Test'
-      this.snackbar = true
+      this.axios.get('/api/code')
+        .then((response) => {
+          if(response.status == 200){
+            this.verifyCode = response.data.url
+            this.h = response.data.h
+          } else {
+            this.alertText = '加载失败.webp'
+            this.snackbarColor = 'error'
+            this.snackbar = true
+          }
+        })
+        .catch(() => {
+          this.alertText = '网络异常'
+          this.snackbarColor = 'error'
+          this.snackbar = true
+        })
     },
     verify() {
-      this.progress = true
+      if(this.$refs.verifyCode){
+        if(this.$refs.verifyCode.validate()){
+          this.progress = true
+          this.axios.post('/api/verify', {
+            code: this.code,
+            h: this.h
+          }).then((response) => {
+            if(response.status == 200){
+              if(response.data.retCode == 1){
+                  this.alertText = '验证成功'
+                  this.snackbarColor = 'success'
+                  this.snackbar = true
+                  this.verifyDialog = false
+                  this.axios.get(this.downloadLink).catch(() => {
+                    this.alertText = '网络异常'
+                    this.snackbarColor = 'error'
+                    this.snackbar = true
+                  })
+              } else {
+                  this.alertText = '验证失败'
+                  this.snackbarColor = 'error'
+                  this.snackbar = true
+                  this.loadVerifyCode()
+              }
+            } else {
+              this.alertText = '网络异常'
+              this.snackbarColor = 'error'
+              this.snackbar = true
+            }
+            this.stopLoading()
+          })
+        } 
+      }
+      
     },
     stopLoading() {
       if( this.progress ){

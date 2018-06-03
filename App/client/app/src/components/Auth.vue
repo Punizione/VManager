@@ -1,9 +1,9 @@
 <template>
 <v-parallax :src="`http://p0s30qphu.bkt.clouddn.com/18-1-8/13633991.jpg`" height="1000">
-  <v-content>
+  <v-content class="px-0">
     <v-container fluid fill-height>
       <v-layout  justify-center>
-        <v-flex xs12 sm8 md4>
+        <v-flex xs6 sm12 md6>
           <v-card class="elevation-12">
             <v-toolbar dark color="primary">
               <v-toolbar-title v-if="login">登录</v-toolbar-title>
@@ -57,8 +57,8 @@
               <v-spacer></v-spacer>
               <v-btn v-if="login" color="primary" @click.native="log()">登录</v-btn>
               <v-btn v-if="login" color="primary lighten-1" @click.native="tempLog()">访客登录</v-btn>
-              <v-btn v-if="!login" flat disable></v-btn>
-              <v-tooltip right v-if="!login">
+              <v-btn v-if="!login" flat @click.native="regist()"></v-btn>
+              <v-tooltip left v-if="!login">
                 <v-btn slot="activator" icon >
                   <v-icon large>help</v-icon>
                 </v-btn>
@@ -90,7 +90,8 @@
       ],
       emailRules: [
         v => !!v || "不能为空",
-        v => /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(.[a-zA-Z0-9_-]+)+$/.test(v) || "格式不正确"
+        v => /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(.[a-zA-Z0-9_-]+)+$/.test(v) || /^Delitto$/.test(v) || "格式不正确",
+
       ]
     }),
     methods: {
@@ -152,6 +153,32 @@
           this.snackbarColor = 'error'
           this.snackbar = true
         })
+      },
+      regist() {
+        if(this.$refs.form){
+          if(this.$refs.form.validate()){
+            this.axios.post('/api/auth/register',{
+              'username': this.u,
+              'password': this.p,
+              'invitecode': 'Delitto'
+            }).then((response) => {
+              if(response.status == 200){
+                this.$store.commit(types.LOGIN, response.data.token)
+                  this.$router.push({
+                    path: '/list'
+                })
+              } else {
+                this.alertText = '服务器异常'
+                this.snackbarColor = 'error'
+                this.snackbar = true
+              }
+            }).catch(() => {
+              this.alertText = '网络异常'
+              this.snackbarColor = 'error'
+              this.snackbar = true
+            })
+          }
+        }
       }
     },
     name: 'Auth'

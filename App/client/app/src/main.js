@@ -9,6 +9,7 @@ import store from './store/store'
 import axios from './utils/http'
 import VueAxios from 'vue-axios'
 import Aplayer from 'vue-aplayer'
+import QRCode from 'qrcode'
 
 Vue.use(VueAxios, axios)
 

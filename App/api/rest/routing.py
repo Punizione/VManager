@@ -7,7 +7,9 @@ http://flask-restful.readthedocs.io/en/latest/
 import time
 from flask import request,g
 from App.api.rest.base import BaseResource, SecureResource, HalfProtectResource, CheckAuthorizationResource, rest_resource
+from App.api.tools.verifyCodeTools import VerifyCode
 from App.api.models.User import User
+from App.api.models.Ssr import Ssr
 from flask_restful import abort
 import datetime
 import time
@@ -15,6 +17,7 @@ import re
 from App import db
 from App import app
 import jwt
+
 
 @rest_resource
 class ResourceOne(BaseResource):
@@ -37,7 +40,7 @@ class SecureResourceOne(SecureResource):
 
     def get(self, resource_id):
         time.sleep(1)
-        return {'name': 'Resource Two', 'data': resource_id}
+        return {'name': 'Resource Two', 'data': resource_id }
 
 @rest_resource
 class NodeResource(HalfProtectResource):
@@ -46,32 +49,64 @@ class NodeResource(HalfProtectResource):
 
     def get(self):
         if g.user.username == b'visitor':
-            return { "empty": True, "mainparallax": "13633991"}
+            if request.args.get('t') == 'SSR':
+                return Ssr.queryWithVisitor()
         else:
-            return { 
-            "empty": False, 
-            "nodes": [
-                {"id": 1, "title": "XXX", "transfer": "XXX/XXX", "statu": "0", "pic": "63455021"},
-                {"id": 2, "title": "XXX", "transfer": "XXX/XXX", "statu": "0", "pic": "63455021"},
-                {"id": 3, "title": "XXX", "transfer": "XXX/XXX", "statu": "0", "pic": "63455021"},
-                {"id": 4, "title": "XXX", "transfer": "XXX/XXX", "statu": "0", "pic": "63455021"},
-                {"id": 5, "title": "XXX", "transfer": "XXX/XXX", "statu": "0", "pic": "63455021"}
-            ],
-            "mainparallax": "13633991"
-        }
-        
-        return { "empty": True, "mainparallax": "13633991"}
+            if request.args.get('t') == 'SSR':
+                return Ssr.queryWithUser()
+
+    def post(self):
+        if g.user.username != b'visitor':
+            json_payload = request.json
+            typ = json_payload['type']
+            n = json_payload['node']
+            if typ == 'editSSR':
+                Ssr.edit(
+                    n['id'],
+                    n['nodeName'],
+                    n['subtitle'],
+                    n['addr'],
+                    n['port'],
+                    n['psw'],
+                    n['method'],
+                    n['protocol'],
+                    n['protocolParam'],
+                    n['obfs'],
+                    n['obfsParam'],
+                    n['statu']
+                    )
+            elif typ == 'saveSSR':
+                node = Ssr(
+                    nodename=n['nodeName'],
+                    subtitle=n['subtitle'],
+                    addr=n['addr'],
+                    port=n['port'],
+                    psw=n['psw'],
+                    method=n['method'],
+                    protocol=n['protocol'],
+                    protocolparam=n['protocolParam'],
+                    obfs=n['obfs'],
+                    obfsparam=n['obfsParam'],
+                    statu=n['statu']
+                )
+                node.save()
+            elif typ == 'deleteSSR':
+                Ssr.dele(id=n['id'])
+
+
+
 
 
 @rest_resource
-class MenuReosurce(CheckAuthorizationResource):
+class MenuResource(CheckAuthorizationResource):
     """ /api/menu """
     endpoints = ['/menu']
     
     def get(self):
-        noLogin = {'data':[{'title': 'LOGIN','items': [{'icon': 'fingerprint', 'text': '登录', 'url': '/auth'}]}]}
+        noLogin = {'statu': False, 'data':[{'title': 'LOGIN','items': [{'icon': 'fingerprint', 'text': '登录', 'url': '/auth'}]}]}
 
-        loged = {'data': [{'title': 'NODES',  'items': [
+        loged = {'statu': True,
+                'data': [{'title': 'NODES',  'items': [
                     {'icon': 'list', 'text': '节点列表', 'url': '/list'},
                     {'icon': 'trending_up', 'text': '节点测速', 'url': '/speedtest'},
                     {'icon': 'help', 'text': '使用教程', 'url': '/tips'}
@@ -85,8 +120,25 @@ class MenuReosurce(CheckAuthorizationResource):
             return loged
         else:
             return noLogin
-                
-            
+
+@rest_resource
+class VerifyCodeResource(BaseResource):
+    """ /api/code , /api/verify"""
+    endpoints = ['/code', '/verify']
+    
+    def get(self):
+        url, code = VerifyCode.genPicture()
+        return { 'url': url, 'h': code}
+
+
+    def post(self):
+        json_payload = request.json
+        code = json_payload['code']
+        pictureHash = json_payload['h']
+        if VerifyCode.verify(code, pictureHash):
+            return { 'retCode': 1 }
+        else:
+            return { 'retCode': 0 }
 
 
 @rest_resource
@@ -112,12 +164,12 @@ class Login(BaseResource):
                 'username': username,
                 'exp': exp
             }, app.config['SECRET_KEY'], algorithm="HS256")
-            return {'retCode': 1, "token": encode.decode('utf-8') }
+            return { 'retCode': 1, "token": encode.decode('utf-8') }
         else:
             return { 'retCode': 0 }
 
 @rest_resource
-class VisitorLogin(BaseResource):
+class VisitorLoginResource(BaseResource):
     """ /api/auth/temp """
     endpoints = ['/auth/temp']
     def post(self):
@@ -126,12 +178,11 @@ class VisitorLogin(BaseResource):
             'username': 'visitor',
             'exp': exp
         }, app.config['SECRET_KEY'], algorithm='HS256')
-        print(encode)
-        return {'retCode': 1, "token": encode.decode('utf-8') }
+        return { 'retCode': 1, "token": encode.decode('utf-8') }
 
 
 @rest_resource
-class Register(BaseResource):
+class RegisterResource(BaseResource):
     """ /api/auth/register """
     endpoints = ['/auth/register']
     def post(self):
@@ -158,5 +209,5 @@ class Register(BaseResource):
                 'exp': exp
             }, app.config['SECRET_KEY'], algorithm="HS256")
 
-            return {'username': username, 'token': encode.decode('utf-8')}
+            return { 'username': username, 'token': encode.decode('utf-8')}
 

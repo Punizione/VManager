@@ -64,7 +64,8 @@
         <v-layout class="px-0 py-0">
           <v-flex xs12>
             <v-fade-transition mode="out-in">
-              <router-view class="px-0 py-0"></router-view>
+
+              <router-view class="px-0 py-0" v-if="isRouterAlive"></router-view>
             </v-fade-transition>
           </v-flex>
         </v-layout>
@@ -109,6 +110,9 @@
                     <v-flex xs6>
                       <v-text-field v-model="nodeName" :rules="noEmpty" :counter="25" label="节点名称" clearable required></v-text-field>
                     </v-flex>
+                    <v-flex xs6>
+                      <v-text-field v-model="subtitle"  :counter="64" label="附加信息" clearable></v-text-field>
+                    </v-flex>
                     <v-flex xs4>
                       <v-text-field v-model="ssrAddr" :rules="ipRules" label="节点IP" required></v-text-field>
                     </v-flex>
@@ -132,6 +136,15 @@
                     </v-flex>
                     <v-flex xs6>
                       <v-text-field v-model="ssrObfsParam" label="混淆参数" clearable></v-text-field>
+                    </v-flex>
+                    <v-flex xs6>
+
+                        <v-radio-group v-model="ssrStatu" row placeholder="状态">
+                          <v-radio label="↓" value=-1 ></v-radio>
+                          <v-radio label="?" value=0></v-radio>
+                          <v-radio label="↑" value=1></v-radio>
+                        </v-radio-group>
+  
                     </v-flex>
                   </v-layout>
                 </v-form>
@@ -244,6 +257,7 @@ import * as types from './store/types'
 import Aplayer from 'vue-aplayer'
 export default {
   data: () => ({
+    isRouterAlive: true,
     loged: false,
     dialog: false,
     drawer: null,
@@ -298,6 +312,7 @@ export default {
     ],
     ssr: null,
     nodeName: null,
+    subtitle: '',
     ssrAddr: null,
     ssrPort: null,
     ssrPsw: null,
@@ -337,6 +352,7 @@ export default {
       { text: "tls1.2_ticket_auth", value: "tls1.2_ticket_auth"}
     ],
     ssrObfsParam: '',
+    ssrStatu: -1,
     v2ray: null,
     v2InboundPort: null,
     v2Addr: null,
@@ -397,11 +413,10 @@ export default {
     getMenu() {
       this.axios.get('/api/menu').then((response) => {
         if(response.status == 200) {
-          if (response.data.data) {
             this.menus = response.data.data
-          }else {
-            console.log("Menu Error")
-          }
+            if(!response.data.statu){
+              this.logout()
+            }
         }else{
           console.log("Menu Error")
         }
@@ -411,12 +426,39 @@ export default {
     addNode() {
       if(this.$refs.ssr){
         if(this.$refs.ssr.validate()){
-          this.alertText = '添加成功'
-          this.snackbar = true
-          this.dialog = false
+          this.axios.post('/api/nodes', {
+            'type': 'saveSSR',
+            'node': {
+              'nodeName': this.nodeName,
+              'subtitle': this.subtitle,
+              'addr': this.ssrAddr,
+              'port': this.ssrPort,
+              'psw': this.ssrPsw,
+              'method': this.ssrMethod,
+              'protocol': this.ssrProtocol,
+              'obfs': this.ssrObfs,
+              'protocolParam': this.ssrProtocolParam,
+              'obfsParam': this.ssrObfsParam,
+              'statu': this.ssrStatu
+            }
+          }).then(() => {
+            this.alertText = '添加成功'
+            this.snackbarColor = 'success'
+            this.snackbar = true
+            this.dialog = false
+            this.reload()
+          }).catch((err) => {
+            console.log(err)
+            this.alertText = '网络异常'
+            this.snackbarColor = 'error'
+            this.snackbar = true
+            this.dialog = false
+          })
+
         }
       }else if(this.$refs.v2ray){
         if(this.$refs.v2ray.validate()){
+          this.snackbarColor = 'success'
           this.alertText = '添加成功'
           this.snackbar = true
           this.dialog = false
@@ -431,7 +473,11 @@ export default {
     },
     changeStatu() {
       this.loged = this.$store.state.loged
-    }
+    },
+    reload () {
+      this.isRouterAlive = false
+      this.$nextTick(() => (this.isRouterAlive = true))
+    },
   },
   created() {
     this.getMenu()
