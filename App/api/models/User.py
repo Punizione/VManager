@@ -27,3 +27,16 @@ class User(db.Model):
 			return user
 		else:
 			return None
+
+	@staticmethod
+	def changePassword(username, oldpassword, newpassword):
+		if username == b'visitor':
+			return {'retCode': -2}
+		else:
+			user = User.query.filter(User.username == username).first()
+			if user and django_pbkdf2_sha256.verify(oldpassword, user.password):
+				user.password = django_pbkdf2_sha256.encrypt(newpassword).encode('utf-8')
+				db.session.commit()
+				return {"retCode": 0}
+			else:
+				return {"retCode": -1}
