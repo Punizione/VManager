@@ -76,7 +76,8 @@ class Ssr(db.Model):
 					"subtitle": node.subtitle,
 					"statu": node.statu,
 					"pic": "63455021",
-					't':True
+					't':True,
+					'ty': 'SSR'
 				})
 			ret["empty"] = False
 			ret["nodes"] = li
