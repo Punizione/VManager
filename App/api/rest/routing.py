@@ -10,6 +10,7 @@ from App.api.rest.base import BaseResource, SecureResource, HalfProtectResource,
 from App.api.tools.verifyCodeTools import VerifyCode
 from App.api.models.User import User
 from App.api.models.Ssr import Ssr
+from App.api.models.V2ray import V2ray
 from flask_restful import abort
 import datetime
 import time
@@ -48,12 +49,17 @@ class NodeResource(HalfProtectResource):
     endpoints = ['/nodes']
 
     def get(self):
+        t = request.args.get('t')
         if g.user.username == b'visitor':
-            if request.args.get('t') == 'SSR':
+            if t == 'SSR':
                 return Ssr.queryWithVisitor()
+            elif t == 'V2Ray':
+                return V2ray.queryWithVisitor()
         else:
-            if request.args.get('t') == 'SSR':
+            if t == 'SSR':
                 return Ssr.queryWithUser()
+            elif t == 'V2Ray':
+                return V2ray.queryWithUser()
 
     def post(self):
         if g.user.username != b'visitor':
@@ -92,6 +98,59 @@ class NodeResource(HalfProtectResource):
                 node.save()
             elif typ == 'deleteSSR':
                 Ssr.dele(id=n['id'])
+            elif typ == 'editV2Ray':
+                V2ray.edit(
+                    id=n['id'],
+                    nodename=n['nodeName'],
+                    subtitle=n['subtitle'],
+                    addr=n['addr'],
+                    port=n['port'],
+                    protocol=n['protocol'],
+                    transport=n['transport'],
+                    tlsenable=n['tlsEnable'],
+                    uuid=n['UUID'],
+                    alterid=n['alterId'],
+                    email=n['email'],
+                    method=n['method'],
+                    psw=n['psw'],
+                    network=n['network'],
+                    user=n['user'],
+                    tcpheader=n['TCPHeader'],
+                    kcpheader=n['KCPHeader'],
+                    websocketpath=n['webSocketPath'],
+                    http2host=n['http2Host'],
+                    http2path=n['http2Path'],
+                    statu=n['statu']
+                )
+            elif typ == 'saveV2Ray':
+                node = V2ray(
+                    nodename=n['nodeName'],
+                    subtitle=n['subtitle'],
+                    addr=n['addr'],
+                    port=n['port'],
+                    protocol=n['protocol'],
+                    transport=n['transport'],
+                    tlsenable=n['tlsEnable'],
+                    uuid=n['UUID'],
+                    alterid=n['alterId'],
+                    email=n['email'],
+                    method=n['method'],
+                    psw=n['psw'],
+                    network=n['network'],
+                    user=n['user'],
+                    tcpheader=n['TCPHeader'],
+                    kcpheader=n['KCPHeader'],
+                    websocketpath=n['webSocketPath'],
+                    http2host=n['http2Host'],
+                    http2path=n['http2Path'],
+                    statu=n['statu']
+                )
+                node.save()
+            elif typ == 'deleteV2Ray':
+                V2ray.dele(n['id'])
+        else:
+            return { 'retCode': 0 }
+
 
 
 
@@ -142,11 +201,17 @@ class VerifyCodeResource(BaseResource):
 
 
 @rest_resource
-class UserResource(SecureResource):
+class UserResource(HalfProtectResource):
     """ /api/user """
     endpoints = ['/user']
     def get(self, username):
         return {"head": "24935690", "name": username}
+    def post(self):
+        json_payload = request.json
+        oldp = json_payload['p1']
+        newp = json_payload['p2']
+        return User.changePassword(g.user.username, oldp, newp)
+
 
 
 @rest_resource
@@ -211,3 +276,132 @@ class RegisterResource(BaseResource):
 
             return { 'username': username, 'token': encode.decode('utf-8')}
 
+@rest_resource
+class RssResource(HalfProtectResource):
+    """ /api/rss """
+    endpoints = ['/rss']
+    def get(self):
+        if g.user.username != b'visitor':
+            return {
+                'ssrRss': 'https://delitto.club',
+                'v2rayRss': 'https://delitto.club',
+                'bak1Rss': 'https://delitto.club'
+            }
+        else:
+            return {
+                'ssrRss': 'https://█████████████',
+                'v2rayRss': 'https://█████████████',
+                'bak1Rss': 'https://█████████████'
+            }
+
+@rest_resource
+class TipResource(HalfProtectResource):
+    """ /api/tips """
+    endpoints = ['/tips']
+    def get(self):
+        return {
+            'steps': [
+                {
+                    'text': 'ssr', 
+                    'icon': 'airplanemode_active',
+                    'step':[
+                        {
+                            'title':'1',
+                            'subtitle':'1',
+                            'num': 1,
+                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
+                            'text':'text'
+                        },
+                        {
+                            'title':'2',
+                            'subtitle':'2',
+                            'num': 2,
+                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
+                            'text':'text'
+                        },
+                        {
+                            'title':'3',
+                            'subtitle':'3',
+                            'num': 3,
+                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
+                            'text':'text'
+                        },
+                         {
+                            'title':'4',
+                            'subtitle':'4',
+                            'num': 4,
+                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
+                            'text':'text'
+                        }
+                    ]
+                },
+                {
+                    'text': 'v2ray', 
+                    'icon': 'airplanemode_active',
+                    'step':[
+                        {
+                            'title':'1',
+                            'subtitle':'1',
+                            'num': 1,
+                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
+                            'text':'text'
+                        },
+                        {
+                            'title':'2',
+                            'subtitle':'2',
+                            'num': 2,
+                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
+                            'text':'text'
+                        },
+                        {
+                            'title':'3',
+                            'subtitle':'3',
+                            'num': 3,
+                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
+                            'text':'text'
+                        },
+                         {
+                            'title':'4',
+                            'subtitle':'4',
+                            'num': 4,
+                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
+                            'text':'text'
+                        }
+                    ]
+                },
+                {
+                    'text': 'IPV6', 
+                    'icon': 'airplanemode_active',
+                    'step':[
+                        {
+                            'title':'1',
+                            'subtitle':'1',
+                            'num': 1,
+                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
+                            'text':'text'
+                        },
+                        {
+                            'title':'2',
+                            'subtitle':'2',
+                            'num': 2,
+                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
+                            'text':'text'
+                        },
+                        {
+                            'title':'3',
+                            'subtitle':'3',
+                            'num': 3,
+                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
+                            'text':'text'
+                        },
+                         {
+                            'title':'4',
+                            'subtitle':'4',
+                            'num': 4,
+                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
+                            'text':'text'
+                        }
+                    ]
+                }
+            ]
+        }
