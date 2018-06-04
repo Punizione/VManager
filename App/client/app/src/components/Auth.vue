@@ -181,6 +181,13 @@
         }
       }
     },
+    created() {
+      if (this.$store.state.loged) {
+        this.$router.push({
+          path: '/list'
+        })
+      }
+    },
     name: 'Auth'
   }
 </script>

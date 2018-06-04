@@ -91,8 +91,26 @@ export default {
     changePassword() {
       if(this.$refs.changePswForm.validate()){
         if(this.newPassword == this.newPasswordRe){
-          this.snackbarColor = 'success'
-          this.alertText = '修改成功'
+          this.axios.post('/api/user',{
+            'p1': this.oldPassword,
+            'p2':this.newPassword
+          }).then((response) => {
+            if(response.status==200){
+              if(response.data.retCode == 0) {
+                this.snackbarColor = 'success'
+                this.alertText = '修改成功'
+              } else if(response.data.retCode == -1){
+                this.snackbarColor = 'warning'
+                this.alertText = '原密码错误'
+              } else {
+                this.snackbarColor = 'error'
+                this.alertText = '你个游客改个P的密码'
+              }
+            }else{
+              this.snackbarColor = 'error'
+              this.alertText = '网络异常'
+            }
+          })
         } else {
           this.snackbarColor = 'error'
           this.alertText = '两次输入密码不一致'

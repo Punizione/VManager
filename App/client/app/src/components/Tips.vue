@@ -1,5 +1,5 @@
 <template>
-  <v-parallax :src="`http://p0s30qphu.bkt.clouddn.com/18-1-8/${ mainparallax.url }.jpg`" height="1000">
+  <v-parallax :src="`http://p0s30qphu.bkt.clouddn.com/18-1-8/13633991.jpg`" height="1000">
     <v-content class="px-0 py-0">
       <v-container fluid>
         <v-layout column>
@@ -13,10 +13,8 @@
               <v-tabs color="indigo" slot="extension" v-model="tab" drak grow icons-and-text>
                 <v-tabs-slider color="yellow"></v-tabs-slider>
                 <template class="loading" v-if="loaded===false"></template>
-                <template v-else-if="error" class="error"></template>
-                <template v-else-if="empty" class="empty"></template>
                 <template v-else>
-                  <v-tab v-for="item in steps" :key="item">
+                  <v-tab v-for="item in steps" :key="item.text">
                     {{ item.text }}
                     <v-icon>{{ item.icon }}</v-icon>
                   </v-tab>
@@ -32,8 +30,6 @@
                 </v-container>
               </v-content>
             </template>
-            <template v-else-if="error" class="error"></template>
-            <template v-else-if="empty" class="empty"></template>
             <template v-else>
               <v-tabs-items v-model="tab">
                 <v-tab-item v-for="item in steps" :key="item.text">
@@ -46,7 +42,7 @@
                         </v-stepper-step>
                         <v-stepper-content :step='st.num'>
                           <v-card  flat>
-                            <v-card-media :src="st.pic">
+                            <v-card-media :src="st.pic" height="196" contain>
                             </v-card-media>
                             <v-card-title primary-title>
                               <div>{{ st.text }}</div>
@@ -102,9 +98,7 @@ export default {
       ],
       empty: false,
       error: null,
-      mainparallax: {
-        url: null
-      }
+
     }
   },
   created() {
@@ -117,28 +111,21 @@ export default {
     fetchData() {
       this.error = this.steps = null
       this.loaded = false
-      this.axios.get('http://localhost:8843/steps').then((response) => {
+      this.axios.get('/api/tips').then((response) => {
         if (response.status == 200) {
-          if (response.data.error) {
-            this.error = response.error.toString()
-          } else {
-            if (response.data.empty) {
-              this.empty = true
-            } else {
-              this.steps = response.data.steps
-              this.steptor = 1
-
-            }
-            this.mainparallax = response.data.mainparallax
-          }
+          this.steps = response.data.steps
+          this.steptor = 1
+          this.tab = '0'
           this.loaded = true
         } else {
           this.error = response.statusText
         }
+      }).catch(() => {
+        this.loaded = true
       })
     }
   },
-  name: 'List'
+  name: 'Tips'
 }
 
 </script>

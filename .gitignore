@@ -6,7 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 /test/e2e/reports/
 selenium-debug.log
-/__pycacha__/
+/__pycache__/
 # Editor directories and files
 .idea
 .vscode

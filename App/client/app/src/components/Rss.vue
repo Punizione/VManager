@@ -47,6 +47,20 @@ export default {
     v2rayRss: 'https://xx.yy',
     bak1Rss: 'https://xx.yy'
 
-  })
+  }),
+  created() {
+    this.fetchData()
+  },
+  methods: {
+    fetchData(){
+      this.axios.get('/api/rss').then((response) => {
+        if(response.status == 200){
+          this.ssrRss = response.data.ssrRss
+          this.v2rayRss = response.data.v2rayRss
+          this.bak1Rss = response.data.bak1Rss
+        }
+      })
+    }
+  }
 }
 </script>

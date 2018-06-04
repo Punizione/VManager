@@ -154,16 +154,23 @@
               <v-container fluid>
                 <v-form v-model="v2ray" ref="v2ray">
                   <v-layout row wrap>
+
                     <v-flex xs6>
                       <v-text-field v-model="nodeName" :rules="noEmpty" :counter="25" label="节点名称" clearable required></v-text-field>
                     </v-flex>
+
                     <v-flex xs6>
                       <v-select :items="v2ProtocolItems" v-model="v2Protocol" label="传入协议" ></v-select>
                     </v-flex>
-                    <template v-if="v2Protocol=='Shadowsocks'">
-                      <v-flex xs6>
+                    <v-flex xs6>
                         <v-text-field v-model="v2Addr" :rules="v2AddrRules" label="节点地址" required></v-text-field>
                       </v-flex>
+                      <v-flex xs6>
+                         <v-text-field v-model="v2Port" label="端口" :rules="portRules" required></v-text-field>
+                      </v-flex>
+
+                    <template v-if="v2Protocol=='Shadowsocks'">
+                      
                       <v-flex xs6>
                         <v-text-field v-model="v2Email" :rules="emailRules" label="邮箱地址" clearable required></v-text-field>
                       </v-flex>
@@ -176,36 +183,40 @@
                       <v-flex xs6>
                         <v-select v-model="v2Network" label="服务器网络协议" :items="v2NetworkItems" ></v-select>
                       </v-flex>
+                       <v-flex xs6>
+                        <v-text-field v-model="subtitle"  :counter="64" label="附加信息" clearable></v-text-field>
+                      </v-flex>
                     </template>
                     <template v-else-if="v2Protocol=='SOCKS'">
-                      <v-flex xs6>
-                        <v-text-field v-model="v2Addr" :rules="v2AddrRules" label="节点地址" required></v-text-field>
-                      </v-flex>
-                      <v-flex xs6>
-                         <v-text-field v-model="v2InboundPort" label="端口" :rules="portRules" required></v-text-field>
-                      </v-flex>
+                     
                       <v-flex xs6>
                         <v-text-field v-model="v2User" label="用户名" :rules="noEmpty" required></v-text-field>
                       </v-flex>
                       <v-flex xs6>
                         <v-text-field v-model="v2Psw" label="密码" :rules="noEmpty" required></v-text-field>
                       </v-flex>
+                      <v-flex xs6>
+                        <v-text-field v-model="subtitle"  :counter="64" label="附加信息" clearable></v-text-field>
+                      </v-flex>
                     </template>
                     <template v-else-if="v2Protocol=='VMess'">
-                      <v-flex xs6>
-                        <v-text-field v-model="v2InboundPort" label="传入端口" :rules="portRules" required></v-text-field>
-                      </v-flex>
-                      <v-flex xs6>
-                        <v-text-field v-model="v2Addr" :rules="v2AddrRules" label="节点地址" required></v-text-field>
-                      </v-flex>
+                     
+                      
                       <v-flex xs10>
                         <v-text-field v-model="v2UUID" label="用户UUID" :rules="uuidRules" required></v-text-field>
                       </v-flex>
                       <v-flex xs2>
                         <v-text-field v-model="v2AlterId" label="额外ID" :rules="alterIdRules" required></v-text-field>
                       </v-flex>
+                      <v-flex xs6>
+                        <v-text-field v-model="subtitle"  :counter="64" label="附加信息" clearable></v-text-field>
+                      </v-flex>
                     </template>
-                    
+                    <template v-else-if="v2Protocol=='HTTP'">
+                      <v-flex xs6>
+                        <v-text-field v-model="subtitle"  :counter="64" label="附加信息" clearable></v-text-field>
+                      </v-flex>
+                    </template>
                     <v-flex xs6>
                       <v-select :items="v2TransportItems" v-model="v2Transport" label="传输配置" ></v-select>
                     </v-flex>
@@ -234,6 +245,13 @@
                     </template>
                     <v-flex xs6>
                       <v-switch :label="`使用TLS: ${tlsEnable}`" v-model="tlsEnable" ></v-switch>
+                    </v-flex>
+                    <v-flex xs6>
+                        <v-radio-group v-model="ssrStatu" row placeholder="状态">
+                          <v-radio label="↓" value=-1 ></v-radio>
+                          <v-radio label="?" value=0></v-radio>
+                          <v-radio label="↑" value=1></v-radio>
+                        </v-radio-group>
                     </v-flex>
                   </v-layout>
                 </v-form>
@@ -268,7 +286,7 @@ export default {
     defaultMusic: {
       title: 'secret base~君がくれたもの~',
       artist: 'Silent Siren',
-      src: 'https://moeplayer.b0.upaiyun.com/aplayer/secretbase.mp3',
+      src: 'http://m10.music.126.net/20180604103758/c48544585e6c47f0bfd76089670fb8dd/ymusic/cfbb/f6e5/b616/73c182e020cd1028ffdc3382ecadb9d3.mp3',
       pic: 'https://moeplayer.b0.upaiyun.com/aplayer/secretbase.jpg'
     },
     musicList : [],
@@ -318,7 +336,10 @@ export default {
     ssrPsw: null,
     ssrMethod: 'none',
     ssrProtocol: 'origin',
+    ssrProtocolParam: '',
     ssrObfs: 'plain',
+    ssrObfsParam: '',
+    ssrStatu: '-1',
     ssrMethodItems: [
       { text: "none", value: "none"},
       { text: "table", value: "table"},
@@ -343,7 +364,6 @@ export default {
       { text: "auth_aes128_md5", value: "auth_aes128_md5"},
       { text: "auth_chain_a", value: "auth_chain_a"}
     ],
-    ssrProtocolParam: '',
     ssrObfsItems: [
       { text: "plain", value: "plain"},
       { text: "http_simple", value: "http_simple"},
@@ -351,10 +371,8 @@ export default {
       { text: "tls_simple", value: "tls_simple"},
       { text: "tls1.2_ticket_auth", value: "tls1.2_ticket_auth"}
     ],
-    ssrObfsParam: '',
-    ssrStatu: -1,
     v2ray: null,
-    v2InboundPort: null,
+    v2Port: null,
     v2Addr: null,
     v2UUID: null,
     v2AlterId: null,
@@ -362,33 +380,38 @@ export default {
     v2User: null,
     v2Psw: null,
     v2Transport: 'TCP',
+    v2WebSocketPath: null,
+    v2HTTP2Host: null,
+    v2HTTP2Path: null,
+    v2Statu: '-1',
+    v2Network: 'tcp',
+    v2Method: "aes-256-cfb",
+    tlsEnable: false,
+    v2KCPHeader: 'none',
+    v2Protocol: 'VMess',
+    v2TCPHeader: 'none',
     v2TransportItems: [
       { text: "TCP", value: "TCP"},
       { text: "mKCP", value: "mKCP"},
       { text: "webSocket", value: "webSocket"},
       { text: "HTTP/2", value: "HTTP/2"}
     ],
-    v2TCPHeader: 'none',
     v2TCPHeaderPretend: [
       { text: "不伪装", value: "none"},
       { text: "HTTP", value: "http"}
     ],
-    v2Protocol: 'VMess',
     v2ProtocolItems: [
       { text: "HTTP", value: "HTTP"},
       { text: "Shadowsocks", value: "Shadowsocks"},
       { text: "SOCKS", value: "SOCKS"},
       { text: "VMess", value: "VMess"}
     ],
-    tlsEnable: false,
-    v2KCPHeader: 'none',
     v2KCPHeaderPretend: [
       { text: "不伪装", value: "none"},
       { text: "视频通话", value: "srtp"},
       { text: "BT下载", value: "utp"},
       { text: "微信视频", value: "wechat-video"}
     ],
-    v2Method: "aes-256-cfb",
     v2MethodItmes: [
       { text: "aes-256-cfb", value: "aes-256-cfb"},
       { text: "aes-128-cfb", value: "aes-128-cfb"},
@@ -398,15 +421,11 @@ export default {
       { text: "aes-128-gcm", value: "aes-128-gcm"},
       { text: "chacha20-poly1305", value: "chacha20-poly1305"}
     ],
-    v2Network: 'tcp',
     v2NetworkItems: [
       { text: "TCP", value: "tcp"},
       { text: "UDP", value: "udp"},
       { text: "TCP,UDP", value: "tcp,udp"}
-    ],
-    v2WebSocketPath: null,
-    v2HTTP2Host: null,
-    v2HTTP2Path: null
+    ]
 
   }),
   methods: {
@@ -420,8 +439,9 @@ export default {
         }else{
           console.log("Menu Error")
         }
+        this.changeStatu()
       })
-      this.changeStatu()
+      
     },
     addNode() {
       if(this.$refs.ssr){
@@ -458,10 +478,53 @@ export default {
         }
       }else if(this.$refs.v2ray){
         if(this.$refs.v2ray.validate()){
-          this.snackbarColor = 'success'
-          this.alertText = '添加成功'
-          this.snackbar = true
-          this.dialog = false
+          this.axios.post('/api/nodes', {
+            'type': 'saveV2Ray',
+            'node': {
+              'nodeName': this.nodeName,
+              'subtitle': this.subtitle,
+              'addr': this.v2Addr,
+              'port': this.v2Port,
+              'protocol': this.v2Protocol,
+              'transport': this.v2Transport,
+              'tlsEnable': this.tlsEnable,
+              'UUID': this.v2UUID,
+              'alterId': this.v2AlterId,
+              'email': this.v2Email,
+              'method': this.v2Method,
+              'psw': this.v2Psw,
+              'network': this.v2Network,
+              'user': this.v2User,
+              'TCPHeader': this.v2TCPHeader,
+              'KCPHeader': this.v2KCPHeader,
+              'webSocketPath': this.v2WebSocketPath,
+              'http2Host': this.v2HTTP2Host,
+              'http2Path': this.v2HTTP2Path,
+              'statu': this.v2Statu
+            }
+          }).then((response) => {
+            if (response.data) {
+              if (response.data.retCode == 0) {
+                this.alertText = '做个按钮给你看看而已，游客还想瞎玩？'
+                this.snackbarColor = 'error'
+                this.snackbar = true
+                this.dialog = false
+              }
+            }else {
+              this.alertText = '添加成功'
+              this.snackbarColor = 'success'
+              this.snackbar = true
+              this.dialog = false
+              this.reload()
+            }
+            
+          }).catch((err) => {
+            console.log(err)
+            this.alertText = '网络异常'
+            this.snackbarColor = 'error'
+            this.snackbar = true
+            this.dialog = false
+          })
         }
       }
     },
@@ -481,7 +544,6 @@ export default {
   },
   created() {
     this.getMenu()
-    this.loged = this.$store.state.loged
   },
   watch: {
     '$route': 'getMenu'

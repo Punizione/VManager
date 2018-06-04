@@ -125,7 +125,7 @@
                 </v-form>
               </v-container>
             </template>
-            <template v-else-if="typeSelect=='V2ray'">
+            <template v-else-if="typeSelect=='V2Ray'">
               <v-container fluid>
                 <v-form v-model="v2ray" ref="v2ray">
                   <v-layout row wrap>
@@ -157,7 +157,7 @@
                         <v-text-field v-model="v2Addr" :rules="v2AddrRules" label="节点地址" required></v-text-field>
                       </v-flex>
                       <v-flex xs6>
-                         <v-text-field v-model="v2InboundPort" label="端口" :rules="portRules" required></v-text-field>
+                         <v-text-field v-model="v2Port" label="端口" :rules="portRules" required></v-text-field>
                       </v-flex>
                       <v-flex xs6>
                         <v-text-field v-model="v2User" label="用户名" :rules="noEmpty" required></v-text-field>
@@ -168,7 +168,7 @@
                     </template>
                     <template v-else-if="v2Protocol=='VMess'">
                       <v-flex xs6>
-                        <v-text-field v-model="v2InboundPort" label="传入端口" :rules="portRules" required></v-text-field>
+                        <v-text-field v-model="v2Port" label="传入端口" :rules="portRules" required></v-text-field>
                       </v-flex>
                       <v-flex xs6>
                         <v-text-field v-model="v2Addr" :rules="v2AddrRules" label="节点地址" required></v-text-field>
@@ -295,7 +295,10 @@ export default {
       ssrPsw: null,
       ssrMethod: 'none',
       ssrProtocol: 'origin',
+      ssrProtocolParam: '',
       ssrObfs: 'plain',
+      ssrObfsParam: '',
+      ssrStatu: -1,
       ssrMethodItems: [
         { text: "none", value: "none"},
         { text: "table", value: "table"},
@@ -320,7 +323,6 @@ export default {
         { text: "auth_aes128_md5", value: "auth_aes128_md5"},
         { text: "auth_chain_a", value: "auth_chain_a"}
       ],
-      ssrProtocolParam: '',
       ssrObfsItems: [
         { text: "plain", value: "plain"},
         { text: "http_simple", value: "http_simple"},
@@ -328,63 +330,61 @@ export default {
         { text: "tls_simple", value: "tls_simple"},
         { text: "tls1.2_ticket_auth", value: "tls1.2_ticket_auth"}
       ],
-      ssrObfsParam: '',
-      ssrStatu: -1,
       v2ray: null,
-    v2InboundPort: null,
-    v2Addr: null,
-    v2UUID: null,
-    v2AlterId: null,
-    v2Email: null,
-    v2User: null,
-    v2Psw: null,
-    v2Transport: 'TCP',
-    v2TransportItems: [
-      { text: "TCP", value: "TCP"},
-      { text: "mKCP", value: "mKCP"},
-      { text: "webSocket", value: "webSocket"},
-      { text: "HTTP/2", value: "HTTP/2"}
-    ],
-    v2TCPHeader: 'none',
-    v2TCPHeaderPretend: [
-      { text: "不伪装", value: "none"},
-      { text: "HTTP", value: "http"}
-    ],
-    v2Protocol: 'VMess',
-    v2ProtocolItems: [
-      { text: "HTTP", value: "HTTP"},
-      { text: "Shadowsocks", value: "Shadowsocks"},
-      { text: "SOCKS", value: "SOCKS"},
-      { text: "VMess", value: "VMess"}
-    ],
-    tlsEnable: false,
-    v2KCPHeader: 'none',
-    v2KCPHeaderPretend: [
-      { text: "不伪装", value: "none"},
-      { text: "视频通话", value: "srtp"},
-      { text: "BT下载", value: "utp"},
-      { text: "微信视频", value: "wechat-video"}
-    ],
-    v2Method: "aes-256-cfb",
-    v2MethodItmes: [
-      { text: "aes-256-cfb", value: "aes-256-cfb"},
-      { text: "aes-128-cfb", value: "aes-128-cfb"},
-      { text: "chacha20", value: "chacha20"},
-      { text: "chacha20-ietf", value: "chacha20-ietf"},
-      { text: "aes-256-gcm", value: "aes-256-gcm"},
-      { text: "aes-128-gcm", value: "aes-128-gcm"},
-      { text: "chacha20-poly1305", value: "chacha20-poly1305"}
-    ],
-    v2Network: 'tcp',
-    v2NetworkItems: [
-      { text: "TCP", value: "tcp"},
-      { text: "UDP", value: "udp"},
-      { text: "TCP,UDP", value: "tcp,udp"}
-    ],
-    v2WebSocketPath: null,
-    v2HTTP2Host: null,
-    v2HTTP2Path: null
-      
+      v2Id: null,
+      v2Port: null,
+      v2Addr: null,
+      v2UUID: null,
+      v2AlterId: null,
+      v2Email: null,
+      v2User: null,
+      v2Psw: null,
+      v2Transport: 'TCP',
+      v2TCPHeader: 'none',
+      v2Protocol: 'VMess',
+      tlsEnable: false,
+      v2KCPHeader: 'none',
+      v2Method: "aes-256-cfb",
+      v2Network: 'tcp',
+      v2WebSocketPath: null,
+      v2HTTP2Host: null,
+      v2HTTP2Path: null,
+      v2TransportItems: [
+        { text: "TCP", value: "TCP"},
+        { text: "mKCP", value: "mKCP"},
+        { text: "webSocket", value: "webSocket"},
+        { text: "HTTP/2", value: "HTTP/2"}
+      ],
+      v2TCPHeaderPretend: [
+        { text: "不伪装", value: "none"},
+        { text: "HTTP", value: "http"}
+      ],
+      v2ProtocolItems: [
+        { text: "HTTP", value: "HTTP"},
+        { text: "Shadowsocks", value: "Shadowsocks"},
+        { text: "SOCKS", value: "SOCKS"},
+        { text: "VMess", value: "VMess"}
+      ],
+      v2KCPHeaderPretend: [
+        { text: "不伪装", value: "none"},
+        { text: "视频通话", value: "srtp"},
+        { text: "BT下载", value: "utp"},
+        { text: "微信视频", value: "wechat-video"}
+      ],
+      v2MethodItmes: [
+        { text: "aes-256-cfb", value: "aes-256-cfb"},
+        { text: "aes-128-cfb", value: "aes-128-cfb"},
+        { text: "chacha20", value: "chacha20"},
+        { text: "chacha20-ietf", value: "chacha20-ietf"},
+        { text: "aes-256-gcm", value: "aes-256-gcm"},
+        { text: "aes-128-gcm", value: "aes-128-gcm"},
+        { text: "chacha20-poly1305", value: "chacha20-poly1305"}
+      ],
+      v2NetworkItems: [
+        { text: "TCP", value: "tcp"},
+        { text: "UDP", value: "udp"},
+        { text: "TCP,UDP", value: "tcp,udp"}
+      ]  
     }
   },
   created() {
@@ -417,36 +417,64 @@ export default {
       })
     },
     openDialog(item) {
-      this.node = item
-      if(!item.t){
-        var l = "ssr://"+
-        base64.encode(
-          item.addr+":"+item.port+":"+item.protocol+":"+item.method+":"+item.obfs+":"+base64.encode(item.psw)+"/?"+"obfsparam="+base64.encode(item.obfsParam)+"&protocolparam="+base64.encode(item.protocolParam)+"&remarks="+base64.encode(item.nodeName+'-'+item.subtitle)+"&group="+base64.encode("Delitto"))
-        QRCode.toDataURL(l).then(url => {
-            this.currentQr = url
-          })
-          .catch(err => {
-            this.currentQr = 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg'
-          })
+      if(item.ty == 'SSR'){
+        this.node = item
+        if(!item.t){
+          var l = "ssr://"+
+          base64.encode(
+            item.addr+":"+item.port+":"+item.protocol+":"+item.method+":"+item.obfs+":"+base64.encode(item.psw)+"/?"+"obfsparam="+base64.encode(item.obfsParam)+"&protocolparam="+base64.encode(item.protocolParam)+"&remarks="+base64.encode(item.nodeName+'-'+item.subtitle)+"&group="+base64.encode("Delitto"))
+          QRCode.toDataURL(l).then(url => {
+              this.currentQr = url
+            })
+            .catch(err => {
+              this.currentQr = 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg'
+            })
+        }
+        this.dialog = true
       }
-      this.dialog = true
     },
     showEditModal(item) {
       this.typeSelect = item.ty
-      this.nodeName = item.nodeName,
-      this.subtitle = item.subtitle,
-      this.ssrId = item.id,
-      this.ssrAddr = item.addr,
-      this.ssrPort = item.port,
-      this.ssrPsw = item.psw,
-      this.ssrMethod = item.method,
-      this.ssrProtocol = item.protocol,
-      this.ssrObfs = item.obfs,
-      this.ssrProtocolParam = item.protocolParam,
-      this.ssrObfsParam = item.obfsParam,
-      this.ssrStatu = ''+item.statu
-      this.editDialog = true
-      this.ty = item.ty
+      if (this.typeSelect == 'SSR'){
+        this.nodeName = item.nodeName
+        this.subtitle = item.subtitle
+        this.ssrId = item.id
+        this.ssrAddr = item.addr
+        this.ssrPort = item.port
+        this.ssrPsw = item.psw
+        this.ssrMethod = item.method
+        this.ssrProtocol = item.protocol
+        this.ssrObfs = item.obfs
+        this.ssrProtocolParam = item.protocolParam
+        this.ssrObfsParam = item.obfsParam
+        this.ssrStatu = ''+item.statu
+        this.editDialog = true
+        this.ty = item.ty
+      } else if (this.typeSelect == 'V2Ray'){
+        this.nodeName = item.nodeName
+        this.subtitle = item.subtitle
+        this.v2Statu = ''+item.statu
+        this.v2Port = item.port
+        this.v2Addr = item.addr
+        this.v2UUID = item.UUID
+        this.v2AlterId = item.alterId
+        this.v2Email = item.email
+        this.v2User = item.user
+        this.v2Psw = item.psw
+        this.v2Transport = item.transport
+        this.v2TCPHeader = item.TCPHeader
+        this.v2KCPHeader = item.KCPHeader
+        this.v2Protocol = item.protocol
+        this.tlsEnable = item.tlsEnable
+        this.v2Method = item.method
+        this.v2NetWork = item.network
+        this.v2WebSocketPath = item.webSocketPath
+        this.v2HTTP2Host = item.http2Host
+        this.v2HTTP2Path = item.http2Path
+        this.ty = item.ty
+        this.editDialog = true
+
+      }
     },
     dele(item) {
       this.axios.post("/api/nodes", {
@@ -458,7 +486,7 @@ export default {
         this.alertText = '删除成功'
         this.snackbarColor = 'success'
         this.snackbar = true
-        this.fetchData()
+        this.fetchData(this.typeSelect)
       }).catch(() => {
         this.alertText = '删除失败'
         this.snackbarColor = 'error'
@@ -466,34 +494,73 @@ export default {
       })
     },
     editNode() {
-      this.axios.post('/api/nodes', {
-        type: 'edit'+this.ty,
-        node: {
-          'nodeName': this.nodeName,
-          'subtitle': this.subtitle,
-          'addr': this.ssrAddr,
-          'port': this.ssrPort,
-          'psw': this.ssrPsw,
-          'method': this.ssrMethod,
-          'protocol': this.ssrProtocol,
-          'obfs': this.ssrObfs,
-          'protocolParam': this.ssrProtocolParam,
-          'obfsParam': this.ssrObfsParam,
-          'statu': this.ssrStatu,
-          'id': this.ssrId
-        }
-      }).then(() => {
-        this.alertText = '更新成功'
-        this.snackbarColor = 'success'
-        this.snackbar = true
-        this.editDialog = false
-        this.fetchData()
-      }).catch(() => {
-        this.alertText = '更新失败'
-        this.snackbarColor = 'error'
-        this.snackbar = true
-        this.editDialog = false
-      })
+      if (this.ty == 'SSR'){
+        this.axios.post('/api/nodes', {
+          type: 'edit'+this.ty,
+          node: {
+            'nodeName': this.nodeName,
+            'subtitle': this.subtitle,
+            'addr': this.ssrAddr,
+            'port': this.ssrPort,
+            'psw': this.ssrPsw,
+            'method': this.ssrMethod,
+            'protocol': this.ssrProtocol,
+            'obfs': this.ssrObfs,
+            'protocolParam': this.ssrProtocolParam,
+            'obfsParam': this.ssrObfsParam,
+            'statu': this.ssrStatu,
+            'id': this.ssrId
+          }
+        }).then(() => {
+          this.alertText = '更新成功'
+          this.snackbarColor = 'success'
+          this.snackbar = true
+          this.editDialog = false
+          this.fetchData(this.typeSelect)
+        }).catch(() => {
+          this.alertText = '更新失败'
+          this.snackbarColor = 'error'
+          this.snackbar = true
+          this.editDialog = false
+        })
+      } else if(this.ty == 'V2Ray'){
+        this.axios.post("/api/nodes", {
+          type: 'edit'+this.ty,
+          node: {
+            'id': this.v2Id,
+            'nodeName': this.nodeName,
+            'subtitle': this.subtitle,
+            'addr': this.v2Addr,
+            'port': this.v2Port,
+            'protocol': this.v2Protocol,
+            'transport': this.v2Transport,
+            'tlsEnable': this.tlsEnable,
+            'UUID': this.v2UUID,
+            'alterId': this.v2AlterId,
+            'email': this.v2Email,
+            'method': this.v2Method,
+            'psw': this.v2Psw,
+            'network': this.v2Network,
+            'user': this.v2User,
+            'TCPHeader': this.v2TCPHeader,
+            'KCPHeader': this.v2KCPHeader,
+            'webSocketPath': this.v2WebSocketPath,
+            'http2Host': this.v2HTTP2Host,
+            'http2Path': this.v2HTTP2Path,
+            'statu': this.v2Statu
+          }
+        }).then(() => {
+          this.alertText = '更新成功'
+          this.snackbarColor = 'success'
+          this.snackbar = true
+          this.editDialog = false
+        }).catch(() => {
+          this.alertText = '更新失败'
+          this.snackbarColor = 'error'
+          this.snackbar = true
+          this.editDialog = false
+        })
+      }
     },
 
 
