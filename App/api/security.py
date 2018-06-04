@@ -23,12 +23,12 @@ def require_auth(func):
                 abort(400)
             except jwt.ExpiredSignatureError:
                 abort(400)
-            if not decode['username']:
+            if not decoded['username']:
                 abort(401)
-            elif time.mktime(datetime.datetime.utcnow().timetuple()) > decode['exp']:
+            elif time.mktime(datetime.datetime.utcnow().timetuple()) > decoded['exp']:
                 abort(401)
             else:
-                user = User.query.filter_by(username = decode['username']).first()
+                user = User.query.filter_by(username = decoded['username']).first()
                 if not user:
                     abort(401)
                 else:
