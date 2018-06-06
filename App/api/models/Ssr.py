@@ -1,5 +1,5 @@
 from App import db
-
+import base64
 
 
 class Ssr(db.Model):
@@ -113,3 +113,25 @@ class Ssr(db.Model):
 		db.session.add(self)
 		db.session.commit()
 
+
+	@staticmethod
+	def subscribe():
+		ssr_list = Ssr.query.all()
+		ret = ''
+		if ssr_list and len(ssr_list) >0 :
+			for node in ssr_list:
+				ret += base64.urlsafe_b64encode(
+					(
+						node.addr+":"
+						+str(node.port)+":" 
+						+node.protocol+":" 
+						+node.method+":" 
+						+node.obfs+":" 
+						+base64.urlsafe_b64encode((node.psw).encode('utf-8')).decode()+"/?" 
+						+"obfsparam="+base64.urlsafe_b64encode((node.obfsparam).encode('utf-8')).decode()
+						+"&protocolparam="+base64.urlsafe_b64encode((node.protocolparam).encode('utf-8')).decode()
+						+"&remarks="+base64.urlsafe_b64encode((node.nodename+"-"+node.subtitle).encode('utf-8')).decode()
+						+"&group="+base64.urlsafe_b64encode("Delitto".encode('utf-8')).decode()
+					).encode('utf-8')
+				).decode() + "\n"
+		return base64.urlsafe_b64encode(ret.encode('utf-8')).decode()
