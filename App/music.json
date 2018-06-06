@@ -1,0 +1,20 @@
+{	"music":
+	[
+		{"title":"music1",
+		"artist": "artist1",
+		"src": "http://m10.music.126.net/20180604103758/c48544585e6c47f0bfd76089670fb8dd/ymusic/cfbb/f6e5/b616/73c182e020cd1028ffdc3382ecadb9d3.mp3",
+		"pic": "https://moeplayer.b0.upaiyun.com/aplayer/secretbase.jpg"},
+		{"title":"music1",
+		"artist": "artist1",
+		"src": "http://m10.music.126.net/20180604103758/c48544585e6c47f0bfd76089670fb8dd/ymusic/cfbb/f6e5/b616/73c182e020cd1028ffdc3382ecadb9d3.mp3",
+		"pic": "https://moeplayer.b0.upaiyun.com/aplayer/secretbase.jpg"},
+		{"title":"music1",
+		"artist": "artist1",
+		"src": "http://m10.music.126.net/20180604103758/c48544585e6c47f0bfd76089670fb8dd/ymusic/cfbb/f6e5/b616/73c182e020cd1028ffdc3382ecadb9d3.mp3",
+		"pic": "https://moeplayer.b0.upaiyun.com/aplayer/secretbase.jpg"},
+		{"title":"music1",
+		"artist": "artist1",
+		"src": "http://m10.music.126.net/20180604103758/c48544585e6c47f0bfd76089670fb8dd/ymusic/cfbb/f6e5/b616/73c182e020cd1028ffdc3382ecadb9d3.mp3",
+		"pic": "https://moeplayer.b0.upaiyun.com/aplayer/secretbase.jpg"}
+	]
+}
