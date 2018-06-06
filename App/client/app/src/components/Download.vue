@@ -159,8 +159,22 @@ export default {
       if( this.progress ){
         this.progress = ! this.progress
       }
+    },
+    loadResource() {
+      this.axios.get('/api/resource').then((response) => {
+        if(response.status == 200){
+          this.resources = response.data.data
+        }else{
+          this.alertText = '加载资源失败'
+          this.snackbarColor = 'error'
+          this.snackbar = true
+        }
+      })
     }
-
-  }
+  },
+  created() {
+    this.loadResource()
+  },
+  name: 'Download'
 }
 </script>

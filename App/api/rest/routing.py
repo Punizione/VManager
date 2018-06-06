@@ -8,6 +8,7 @@ import time
 from flask import request,g
 from App.api.rest.base import BaseResource, SecureResource, HalfProtectResource, CheckAuthorizationResource, rest_resource
 from App.api.tools.verifyCodeTools import VerifyCode
+from App.api.tools.fileTools import loadJsonFile
 from App.api.models.User import User
 from App.api.models.Ssr import Ssr
 from App.api.models.V2ray import V2ray
@@ -50,7 +51,7 @@ class NodeResource(HalfProtectResource):
 
     def get(self):
         t = request.args.get('t')
-        if g.user.username == b'visitor':
+        if g.user.username == 'visitor':
             if t == 'SSR':
                 return Ssr.queryWithVisitor()
             elif t == 'V2Ray':
@@ -62,7 +63,7 @@ class NodeResource(HalfProtectResource):
                 return V2ray.queryWithUser()
 
     def post(self):
-        if g.user.username != b'visitor':
+        if g.user.username != 'visitor':
             json_payload = request.json
             typ = json_payload['type']
             n = json_payload['node']
@@ -167,7 +168,7 @@ class MenuResource(CheckAuthorizationResource):
         loged = {'statu': True,
                 'data': [{'title': 'NODES',  'items': [
                     {'icon': 'list', 'text': '节点列表', 'url': '/list'},
-                    {'icon': 'trending_up', 'text': '节点测速', 'url': '/speedtest'},
+                    #{'icon': 'trending_up', 'text': '节点测速', 'url': '/speedtest'},
                     {'icon': 'help', 'text': '使用教程', 'url': '/tips'}
                     ]},{'title': 'USER','items': [
                     {'icon': 'rss_feed', 'text': '用户订阅', 'url': '/rss'},
@@ -175,7 +176,7 @@ class MenuResource(CheckAuthorizationResource):
                     {'icon': 'cloud_download', 'text': '资源下载', 'url': '/download'}
                 ]}
             ]}
-        if g.user and g.user.username == b'LOGED':
+        if g.user and g.user.username == 'LOGED':
             return loged
         else:
             return noLogin
@@ -204,8 +205,8 @@ class VerifyCodeResource(BaseResource):
 class UserResource(HalfProtectResource):
     """ /api/user """
     endpoints = ['/user']
-    def get(self, username):
-        return {"head": "24935690", "name": username}
+    def get(self):
+        return {"head": "26003829", "name": g.user.username}
     def post(self):
         json_payload = request.json
         oldp = json_payload['p1']
@@ -281,11 +282,11 @@ class RssResource(HalfProtectResource):
     """ /api/rss """
     endpoints = ['/rss']
     def get(self):
-        if g.user.username != b'visitor':
+        if g.user.username != 'visitor':
             return {
-                'ssrRss': 'https://delitto.club',
-                'v2rayRss': 'https://delitto.club',
-                'bak1Rss': 'https://delitto.club'
+                'ssrRss': 'https://delitto.clu',
+                'v2rayRss': 'https://delitto.clu',
+                'bak1Rss': 'https://delitto.clu'
             }
         else:
             return {
@@ -405,3 +406,30 @@ class TipResource(HalfProtectResource):
                 }
             ]
         }
+
+
+@rest_resource
+class ResResource(HalfProtectResource):
+    """ /api/resource """
+    endpoints = ['/resource']
+    def get(self):
+        return loadJsonFile(app.config['RESOURCE_PATH'])
+        
+
+@rest_resource
+class MusicResource(BaseResource):
+    """ /api/music """
+    endpoints = ['/music']
+    def get(self):
+        return loadJsonFile(app.config['MUSIC_PATH'])
+
+
+@rest_resource
+class SubscribeResource(BaseResource):
+    """ /api/subscribe """
+    endpoints = ['/subscribe']
+    def get(self):
+        t = request.args.get('t')
+        if t == 'ssr':
+            return Ssr.subscribe()
+

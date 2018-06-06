@@ -2,7 +2,7 @@
   <v-app>
     <v-navigation-drawer fixed clipped app v-model="drawer" floating value="true">
       <v-card flat>
-        <v-card-media :src="`http://p0s30qphu.bkt.clouddn.com/18-1-8//${user.head}.jpg`" height="200px">
+        <v-card-media src="http://p0s30qphu.bkt.clouddn.com/18-1-8/24935690.jpg" height="200px">
         </v-card-media>
         <v-card-title primary-title>
           <v-layout justify-center>
@@ -40,15 +40,13 @@
         <v-btn icon slot="activator">
           <v-icon>music_note</v-icon>
         </v-btn>
-        
-          <aplayer autoplay :music="defaultMusic" :list="musicList" />
-        
+          <aplayer autoplay :music="defaultMusic" listFolded :list="musicList" listMaxHeight="100px"/>
       </v-bottom-sheet>
       <template v-if="loged">
       <v-menu transition="slide-x-transition" bottom left offset-y min-width="160px" >
         <v-btn icon large slot="activator">
           <v-avatar size="32px" tile>
-            <img src="http://p0s30qphu.bkt.clouddn.com/18-3-18/26003829.jpg" alt="Vmanager">
+            <img :src="`http://p0s30qphu.bkt.clouddn.com/18-3-18//${user.head}.jpg`" alt="Vmanager">
           </v-avatar>
         </v-btn>
         <v-list>
@@ -318,8 +316,8 @@ export default {
       v => /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(.[a-zA-Z0-9_-]+)+$/.test(v) || "格式不正确"
     ],
     user: {
-      head: '24935690',
-      name: 'Delitto'
+      head: '26003829',
+      name: ''
     },
     menus : null,
     typeItems: [
@@ -429,7 +427,7 @@ export default {
 
   }),
   methods: {
-    getMenu() {
+    Prepare() {
       this.axios.get('/api/menu').then((response) => {
         if(response.status == 200) {
             this.menus = response.data.data
@@ -440,6 +438,15 @@ export default {
           console.log("Menu Error")
         }
         this.changeStatu()
+      }).catch((err) => {
+        console.log("Menu Error")
+      })
+      this.axios.get('/api/music').then((response) => {
+        if(response.status == 200){
+          this.musicList = response.data.music
+        }
+      }).catch((err) => {
+        console.log("Music List Error")
       })
       
     },
@@ -461,12 +468,21 @@ export default {
               'obfsParam': this.ssrObfsParam,
               'statu': this.ssrStatu
             }
-          }).then(() => {
-            this.alertText = '添加成功'
-            this.snackbarColor = 'success'
-            this.snackbar = true
-            this.dialog = false
-            this.reload()
+          }).then((response) => {
+           if (response.data) {
+              if (response.data.retCode == 0) {
+                this.alertText = '做个按钮给你看看而已，游客还想瞎玩？'
+                this.snackbarColor = 'error'
+                this.snackbar = true
+                this.dialog = false
+              }
+            }else {
+              this.alertText = '添加成功'
+              this.snackbarColor = 'success'
+              this.snackbar = true
+              this.dialog = false
+              this.reload()
+            }
           }).catch((err) => {
             console.log(err)
             this.alertText = '网络异常'
@@ -519,7 +535,6 @@ export default {
             }
             
           }).catch((err) => {
-            console.log(err)
             this.alertText = '网络异常'
             this.snackbarColor = 'error'
             this.snackbar = true
@@ -541,12 +556,25 @@ export default {
       this.isRouterAlive = false
       this.$nextTick(() => (this.isRouterAlive = true))
     },
+    getUser() {
+      if(this.loged){
+        this.axios.get('/api/user').then((response) => {
+          if(response.status == 200){
+            this.user.name = response.data.name
+            this.user.head = response.data.head
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+      }
+    }
   },
   created() {
-    this.getMenu()
+    this.Prepare()
   },
   watch: {
-    '$route': 'getMenu'
+    '$route': 'Prepare',
+    'loged': 'getUser'
   },
   components: {
     'aplayer': Aplayer
