@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-
+import sys
 
 app = Flask(__name__, static_url_path='')
 
@@ -19,7 +19,9 @@ app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN']=True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
-
+#Constants
+app.config['MUSIC_PATH'] =  sys.path[0]+'\\App\\music.json'
+app.config['RESOURCE_PATH'] = sys.path[0]+'\\App\\resource.json'
 
 from . import config
 app.logger.info('>>> {}'.format(app.config['MODE']))
