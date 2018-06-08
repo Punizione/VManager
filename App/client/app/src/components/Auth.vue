@@ -1,9 +1,9 @@
 <template>
-<v-parallax :src="`http://p0s30qphu.bkt.clouddn.com/18-1-8/13633991.jpg`" height="1000">
+<v-parallax :src="`https://ib.delitto.club/images/2018/06/07/0dV.jpg`" height="1000">
   <v-content class="px-0">
     <v-container fluid fill-height>
       <v-layout  justify-center>
-        <v-flex xs6 sm12 md6>
+        <v-flex xs12 sm12 md12>
           <v-card class="elevation-12">
             <v-toolbar dark color="primary">
               <v-toolbar-title v-if="login">登录</v-toolbar-title>

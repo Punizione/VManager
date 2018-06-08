@@ -1,5 +1,5 @@
 <template>
-  <v-parallax src="http://p0s30qphu.bkt.clouddn.com/18-1-8/13633991.jpg" height="1000">
+  <v-parallax src="https://ib.delitto.club/images/2018/06/07/0dV.jpg" height="1000">
     <v-content class="px-0 py-0">
       <v-container fluid>
         <v-layout column>
@@ -7,11 +7,14 @@
             <v-toolbar color="indigo" dark>
               <v-toolbar-title>资源下载</v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-btn icon>
-                <v-icon>sort</v-icon>
-              </v-btn>
+              <v-tooltip bottom>
+                <v-btn slot="activator" icon>
+                  <v-icon>help</v-icon>
+                </v-btn>
+                <span>化学不好怪我咯？</span>
+              </v-tooltip>
             </v-toolbar>
-            <v-container fluid grid-list-lg>
+            <v-container fluid grid-list-sm>
               <v-layout row wrap>
                 <template v-for="item in resources">
                   <v-flex xs12 sm6 lg4>
@@ -19,7 +22,7 @@
                       <v-container fluid>
                         <v-layout row wrap>
                           <v-flex xs5>
-                            <v-card-media src="@/assets/1.png" height="125px" contain></v-card-media>
+                            <v-card-media :src="item.icon" height="64px" contain></v-card-media>
                           </v-flex>
                           <v-flex xs7>
                             <div>
@@ -50,7 +53,8 @@
         <v-container>
           <v-layout row wrap>
             <v-flex xs12>
-              <v-card-media :src="verifyCode" @click.native="loadVerifyCode()" height="200px"></v-card-media>
+              <v-card-media :src="verifyCode" @click.native="loadVerifyCode()" height="200px" contain
+></v-card-media>
             </v-flex>
             <v-flex xs12>
             <v-form ref="verifyCode">

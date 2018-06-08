@@ -1,5 +1,5 @@
 <template>
-  <v-parallax :src="`http://p0s30qphu.bkt.clouddn.com/18-1-8/13633991.jpg`" height="1000" >
+  <v-parallax :src="`https://ib.delitto.club/images/2018/06/07/0dV.jpg`" height="1000" >
     <v-content class="px-0 py-0">
       <v-container fluid>
         <v-layout column>
@@ -22,7 +22,7 @@
               <v-content class="px-0">
                 <v-container>
                   <v-layout row justify-center align-center>
-                    <img src="http://p0s30qphu.bkt.clouddn.com/18-3-18/77660072.jpg" />
+                    <img src="https://ib.delitto.club/images/2018/06/07/82s.gif" />
                   </v-layout>
                 </v-container>
               </v-content>
@@ -59,7 +59,7 @@
               <template id="modal">
                 <v-dialog v-model="dialog" max-width="300">
                   <v-card>
-                    <v-card-media v-if="node.t" :src="`http://p0s30qphu.bkt.clouddn.com/17-12-11//${ node.pic }.jpg`" height="200px" contain>
+                    <v-card-media v-if="node.t" src="https://ib.delitto.club/images/2018/06/07/Es1.jpg" height="200px" contain>
                     </v-card-media>
                     <v-card-media v-if="!node.t" :src="this.currentQr" height="200px" contain>
                     </v-card-media>
@@ -427,7 +427,7 @@ export default {
               this.currentQr = url
             })
             .catch(err => {
-              this.currentQr = 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg'
+              this.currentQr = 'https://ib.delitto.club/images/2018/06/07/Es1.jpg'
             })
         }
         this.dialog = true

@@ -1,5 +1,5 @@
 <template>
-  <v-parallax :src="`http://p0s30qphu.bkt.clouddn.com/18-1-8/13633991.jpg`" height="1000">
+  <v-parallax :src="`https://ib.delitto.club/images/2018/06/07/0dV.jpg`" height="1000">
     <v-content class="px-0 py-0">
       <v-container fluid>
         <v-layout column>
@@ -25,7 +25,7 @@
               <v-content class="px-0">
                 <v-container>
                   <v-layout row justify-center align-center>
-                    <img src="http://p0s30qphu.bkt.clouddn.com/18-3-18/77660072.jpg" />
+                    <img src="https://ib.delitto.club/images/2018/06/07/82s.gif" />
                   </v-layout>
                 </v-container>
               </v-content>
@@ -37,7 +37,7 @@
                     <v-stepper v-model="steptor" vertical non-linear>
                       <template v-for="st in item.step">
                         <v-stepper-step :step='st.num' :complete='steptor > st.num' editable edit-icon="done">
-                          {{ st.title }}
+                          <div class="headline">{{ st.title }}</div>
                           <small>{{ st.subtitle }}</small>
                         </v-stepper-step>
                         <v-stepper-content :step='st.num'>
@@ -48,7 +48,10 @@
                               <div>{{ st.text }}</div>
                             </v-card-title>
                           </v-card>
-                          <v-btn flat>上一步</v-btn>
+                          <template v-if="st.num>1">
+                            <v-btn flat @click.native="steptor = st.num-1">上一步</v-btn>
+                          </template>
+                          
                           <template v-if="st.num<item.step.length">
                             <v-btn color="primary" @click.native="steptor = st.num+1">下一步</v-btn>
                           </template>

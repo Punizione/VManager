@@ -1,5 +1,5 @@
 <template>
-  <v-parallax src="http://p0s30qphu.bkt.clouddn.com/18-1-8/13633991.jpg" height="1000">
+  <v-parallax src="https://ib.delitto.club/images/2018/06/07/0dV.jpg" height="1000">
     <v-content class="px-0 py-0">
       <v-container fluid>
         <v-layout column>
