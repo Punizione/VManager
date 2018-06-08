@@ -23,28 +23,7 @@ from App import app
 import jwt
 
 
-@rest_resource
-class ResourceOne(BaseResource):
-    """ /api/resource/one """
-    endpoints = ['/resource/one']
 
-    def get(self):
-        time.sleep(1)
-        return {'name': 'Resource One', 'data': True}
-
-    def post(self):
-        json_payload = request.json
-        return {'name': 'Resource Post'}
-
-
-@rest_resource
-class SecureResourceOne(SecureResource):
-    """ /api/resource/two """
-    endpoints = ['/resource/two/<string:resource_id>']
-
-    def get(self, resource_id):
-        time.sleep(1)
-        return {'name': 'Resource Two', 'data': resource_id }
 
 @rest_resource
 class NodeResource(HalfProtectResource):
@@ -262,7 +241,7 @@ class RegisterResource(BaseResource):
         username = json_payload['username']
         password = json_payload['password']
         invitecode = json_payload['invitecode']
-        if invitecode != 'Delitto':
+        if invitecode != 'hkqod1a2d46acc':
             abort(400, message="InviteCode Error")
         if not re.match(r'^[A-Za-z0-9]+$', username):
             abort(400, message="Username Error")
