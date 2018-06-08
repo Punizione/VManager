@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 """
 REST API Resource Routing
 
@@ -206,7 +208,10 @@ class UserResource(HalfProtectResource):
     """ /api/user """
     endpoints = ['/user']
     def get(self):
-        return {"head": "26003829", "name": g.user.username}
+        if g.user.username == 'visitor':
+            return {"head": "58kN.jpg", "name": g.user.username}
+        else:
+            return {"head": "560K.png", "name": g.user.username}
     def post(self):
         json_payload = request.json
         oldp = json_payload['p1']
@@ -284,9 +289,9 @@ class RssResource(HalfProtectResource):
     def get(self):
         if g.user.username != 'visitor':
             return {
-                'ssrRss': 'https://delitto.clu',
-                'v2rayRss': 'https://delitto.clu',
-                'bak1Rss': 'https://delitto.clu'
+                'ssrRss': 'https://vm.delitto.club/api/subscribe?t=ssr',
+                'v2rayRss': 'https:vm.//delitto.club/api/subscribe?t=v2ray',
+                'bak1Rss': 'https://vm.delitto.club/api/subscribe?t=bak1'
             }
         else:
             return {
@@ -300,112 +305,7 @@ class TipResource(HalfProtectResource):
     """ /api/tips """
     endpoints = ['/tips']
     def get(self):
-        return {
-            'steps': [
-                {
-                    'text': 'ssr', 
-                    'icon': 'airplanemode_active',
-                    'step':[
-                        {
-                            'title':'1',
-                            'subtitle':'1',
-                            'num': 1,
-                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
-                            'text':'text'
-                        },
-                        {
-                            'title':'2',
-                            'subtitle':'2',
-                            'num': 2,
-                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
-                            'text':'text'
-                        },
-                        {
-                            'title':'3',
-                            'subtitle':'3',
-                            'num': 3,
-                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
-                            'text':'text'
-                        },
-                         {
-                            'title':'4',
-                            'subtitle':'4',
-                            'num': 4,
-                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
-                            'text':'text'
-                        }
-                    ]
-                },
-                {
-                    'text': 'v2ray', 
-                    'icon': 'airplanemode_active',
-                    'step':[
-                        {
-                            'title':'1',
-                            'subtitle':'1',
-                            'num': 1,
-                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
-                            'text':'text'
-                        },
-                        {
-                            'title':'2',
-                            'subtitle':'2',
-                            'num': 2,
-                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
-                            'text':'text'
-                        },
-                        {
-                            'title':'3',
-                            'subtitle':'3',
-                            'num': 3,
-                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
-                            'text':'text'
-                        },
-                         {
-                            'title':'4',
-                            'subtitle':'4',
-                            'num': 4,
-                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
-                            'text':'text'
-                        }
-                    ]
-                },
-                {
-                    'text': 'IPV6', 
-                    'icon': 'airplanemode_active',
-                    'step':[
-                        {
-                            'title':'1',
-                            'subtitle':'1',
-                            'num': 1,
-                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
-                            'text':'text'
-                        },
-                        {
-                            'title':'2',
-                            'subtitle':'2',
-                            'num': 2,
-                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
-                            'text':'text'
-                        },
-                        {
-                            'title':'3',
-                            'subtitle':'3',
-                            'num': 3,
-                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
-                            'text':'text'
-                        },
-                         {
-                            'title':'4',
-                            'subtitle':'4',
-                            'num': 4,
-                            'pic': 'http://p0s30qphu.bkt.clouddn.com/17-12-11/63455021.jpg',
-                            'text':'text'
-                        }
-                    ]
-                }
-            ]
-        }
+        return loadJsonFile(app.config['STEP_PATH'])
 
 
 @rest_resource

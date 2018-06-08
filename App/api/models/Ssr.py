@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from App import db
 import base64
 
@@ -75,7 +77,6 @@ class Ssr(db.Model):
 					"nodeName": node.nodename,
 					"subtitle": node.subtitle,
 					"statu": node.statu,
-					"pic": "63455021",
 					't':True,
 					'ty': 'SSR'
 				})
@@ -120,18 +121,20 @@ class Ssr(db.Model):
 		ret = ''
 		if ssr_list and len(ssr_list) >0 :
 			for node in ssr_list:
-				ret += base64.urlsafe_b64encode(
-					(
-						node.addr+":"
-						+str(node.port)+":" 
-						+node.protocol+":" 
-						+node.method+":" 
-						+node.obfs+":" 
-						+base64.urlsafe_b64encode((node.psw).encode('utf-8')).decode()+"/?" 
-						+"obfsparam="+base64.urlsafe_b64encode((node.obfsparam).encode('utf-8')).decode()
-						+"&protocolparam="+base64.urlsafe_b64encode((node.protocolparam).encode('utf-8')).decode()
-						+"&remarks="+base64.urlsafe_b64encode((node.nodename+"-"+node.subtitle).encode('utf-8')).decode()
-						+"&group="+base64.urlsafe_b64encode("Delitto".encode('utf-8')).decode()
-					).encode('utf-8')
-				).decode() + "\n"
-		return base64.urlsafe_b64encode(ret.encode('utf-8')).decode()
+				ret += ("ssr://" +
+						base64.b64encode(
+							(
+								node.addr+":"
+								+str(node.port)+":" 
+								+node.protocol+":" 
+								+node.method+":" 
+								+node.obfs+":" 
+								+base64.b64encode((node.psw).encode('utf-8')).decode()+"/?" 
+								+"obfsparam="+base64.b64encode((node.obfsparam).encode('utf-8')).decode()
+								+"&protocolparam="+base64.b64encode((node.protocolparam).encode('utf-8')).decode()
+								+"&remarks="+base64.b64encode((node.nodename+"-"+node.subtitle).encode('utf-8')).decode()
+								+"&group="+base64.b64encode("Delitto".encode('utf-8')).decode()
+							).encode('utf-8')
+						).decode() +"\n")
+
+		return base64.b64encode(ret.encode('utf-8')).decode()
